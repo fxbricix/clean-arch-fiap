@@ -1,0 +1,5 @@
+CREATE TABLE tipo_usuario (
+    id   BIGSERIAL PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL UNIQUE
+);
+INSERT INTO tipo_usuario (nome) VALUES ('CLIENTE'), ('DONO_RESTAURANTE');

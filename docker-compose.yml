@@ -1,0 +1,54 @@
+services:
+
+  postgres:
+    image: postgres:17
+    container_name: postgres-tech-challenge
+
+    environment:
+      POSTGRES_DB: fiap-tech-challenge
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    ports:
+      - "5432:5432"
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d fiap-tech-challenge"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  flyway:
+    image: flyway/flyway:11
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    command:
+      - -url=jdbc:postgresql://postgres:5432/fiap-tech-challenge
+      - -user=postgres
+      - -password=postgres
+      - migrate
+
+    volumes:
+      - ./database/migrations:/flyway/sql
+
+  app:
+    build: .
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: fiap-tech-challenge
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+
+    ports:
+      - "8080:8080"
