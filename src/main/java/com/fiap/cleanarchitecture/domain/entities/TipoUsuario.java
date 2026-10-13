@@ -4,21 +4,33 @@ import lombok.Getter;
 
 @Getter
 public class TipoUsuario {
-    private String tipo;
+    private static final int TAMANHO_MAXIMO_NOME = 50;
+    private static final String DONO_RESTAURANTE = "DONO_RESTAURANTE";
 
-    public TipoUsuario(String tipo) {
-        validaTipo(tipo);
-        this.tipo = tipo;
+    private final Long id;
+    private String nome;
+
+    public TipoUsuario(Long id, String nome) {
+        this.id = id;
+        this.nome = validar(nome);
     }
 
-    public void setTipo(String tipo) {
-        validaTipo(tipo);
-        this.tipo = tipo;
+    public TipoUsuario(String nome) {
+        this(null, nome);
     }
 
-    public void validaTipo(String tipo){
-        if (tipo == null || tipo.length() > 50) {
-            throw new IllegalArgumentException("Tipo de usuario inválido");
+    public void alterarNome(String nome) {
+        this.nome = validar(nome);
+    }
+
+    public boolean ehDonoDeRestaurante() {
+        return DONO_RESTAURANTE.equals(nome);
+    }
+
+    private static String validar(String nome) {
+        if (nome == null || nome.isBlank() || nome.length() > TAMANHO_MAXIMO_NOME) {
+            throw new IllegalArgumentException("Nome do tipo de usuário inválido");
         }
+        return nome.trim();
     }
 }
