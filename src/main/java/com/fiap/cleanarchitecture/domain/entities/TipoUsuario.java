@@ -4,21 +4,21 @@ import lombok.Getter;
 
 @Getter
 public class TipoUsuario {
-    private String nome;
+    private String tipo;
 
-    public TipoUsuario(String nome) {
-        validaNome(nome);
-        this.nome = nome;
+    public TipoUsuario(String tipo) {
+        validaTipo(tipo);
+        this.tipo = tipo;
     }
 
-    public void setNome(String nome) {
-        validaNome(nome);
-        this.nome = nome;
+    public void setTipo(String tipo) {
+        validaTipo(tipo);
+        this.tipo = tipo;
     }
 
-    public void validaNome(String nome){
-        if (nome == null || nome.length() > 50) {
-            throw new IllegalArgumentException("Nome inválido");
+    public void validaTipo(String tipo){
+        if (tipo == null || tipo.length() > 50) {
+            throw new IllegalArgumentException("Tipo de usuario inválido");
         }
     }
 }
