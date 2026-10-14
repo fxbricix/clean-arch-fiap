@@ -1,9 +1,10 @@
-package com.fiap.cleanarchitecture.infrastructure.persistence.repository;
+package com.fiap.cleanarchitecture.infrastructure.persistence.gateway;
 
 import com.fiap.cleanarchitecture.application.gateways.ITipoUsuarioGateway;
 import com.fiap.cleanarchitecture.domain.entities.TipoUsuario;
 import com.fiap.cleanarchitecture.infrastructure.mapper.TipoUsuarioMapper;
 import com.fiap.cleanarchitecture.infrastructure.persistence.entities.TipoUsuarioEntity;
+import com.fiap.cleanarchitecture.infrastructure.persistence.repository.TipoUsuarioJpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
