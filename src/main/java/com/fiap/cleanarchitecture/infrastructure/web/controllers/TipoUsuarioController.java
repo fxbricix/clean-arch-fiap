@@ -1,8 +1,8 @@
-package com.fiap.cleanarchitecture.infrastructure.controllers;
+package com.fiap.cleanarchitecture.infrastructure.web.controllers;
 
 import com.fiap.cleanarchitecture.application.interfaces.ITipoUsuarioUseCase;
-import com.fiap.cleanarchitecture.infrastructure.controllers.dtos.CriarTipoUsuarioDTO;
-import com.fiap.cleanarchitecture.infrastructure.controllers.dtos.TipoUsuarioDTO;
+import com.fiap.cleanarchitecture.infrastructure.web.controllers.dtos.CriarTipoUsuarioDTO;
+import com.fiap.cleanarchitecture.infrastructure.web.controllers.dtos.TipoUsuarioDTO;
 import com.fiap.cleanarchitecture.infrastructure.mapper.TipoUsuarioMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

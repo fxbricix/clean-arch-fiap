@@ -1,8 +1,8 @@
 package com.fiap.cleanarchitecture.infrastructure.mapper;
 
 import com.fiap.cleanarchitecture.domain.entities.TipoUsuario;
-import com.fiap.cleanarchitecture.infrastructure.controllers.dtos.CriarTipoUsuarioDTO;
-import com.fiap.cleanarchitecture.infrastructure.controllers.dtos.TipoUsuarioDTO;
+import com.fiap.cleanarchitecture.infrastructure.web.controllers.dtos.CriarTipoUsuarioDTO;
+import com.fiap.cleanarchitecture.infrastructure.web.controllers.dtos.TipoUsuarioDTO;
 import com.fiap.cleanarchitecture.infrastructure.persistence.entities.TipoUsuarioEntity;
 
 public class TipoUsuarioMapper {
