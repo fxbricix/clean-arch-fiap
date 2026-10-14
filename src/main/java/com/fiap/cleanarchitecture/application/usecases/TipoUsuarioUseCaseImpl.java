@@ -26,9 +26,7 @@ public class TipoUsuarioUseCaseImpl implements ITipoUsuarioUseCase {
 
     @Override
     public void deletar(Long id) {
-        if (!tipoUsuarioGateway.buscarPorId(id).isPresent()) {
-            throw new RecursoNaoEncontradoException("Tipo de usuário não encontrado com o ID: " + id);
-        }
+        buscarPorId(id);
         tipoUsuarioGateway.excluir(id);
     }
 
