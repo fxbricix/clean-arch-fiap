@@ -32,12 +32,13 @@ public class TipoUsuarioUseCaseImpl implements ITipoUsuarioUseCase {
 
     @Override
     public TipoUsuario alterar(Long id, String novoNome) {
-        if (!tipoUsuarioGateway.buscarPorId(id).isPresent()) {
-            throw new RecursoNaoEncontradoException("Tipo de usuário não encontrado com o ID: " + id);
+        TipoUsuario tipo = buscarPorId(id);
+        String nomeAnterior = tipo.getNome();
+        tipo.alterarNome(novoNome);
+        if (!tipo.getNome().equals(nomeAnterior) && tipoUsuarioGateway.existePorNome(tipo.getNome())) {
+            throw new ConflitoException("Tipo de usuário já existe com o nome: " + tipo.getNome());
         }
-        TipoUsuario tipoUsuario = tipoUsuarioGateway.buscarPorId(id).get();
-        tipoUsuario.alterarNome(novoNome);
-        return tipoUsuarioGateway.atualizar(tipoUsuario);
+        return tipoUsuarioGateway.atualizar(tipo);
     }
 
     @Override
