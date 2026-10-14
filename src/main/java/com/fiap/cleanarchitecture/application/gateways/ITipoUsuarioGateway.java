@@ -11,4 +11,5 @@ public interface ITipoUsuarioGateway {
     List<TipoUsuario> listar();
     boolean existePorNome(String nome);
     void excluir(Long id);
+    TipoUsuario atualizar(TipoUsuario tipoUsuario);
 }
