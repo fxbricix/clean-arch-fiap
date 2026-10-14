@@ -48,6 +48,7 @@ public class TipoUsuarioUseCaseImpl implements ITipoUsuarioUseCase {
         );
     }
 
+    @Override
     public List<TipoUsuario> listar() {
         return tipoUsuarioGateway.listar();
     }

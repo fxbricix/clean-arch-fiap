@@ -16,8 +16,8 @@ import java.util.Optional;
 @Repository
 public class TipoUsuarioGatewayImpl implements ITipoUsuarioGateway {
 
-    public final TipoUsuarioJpaRepository repository;
-    public static final TipoUsuarioMapper MAPPER = new TipoUsuarioMapper();
+    private final TipoUsuarioJpaRepository repository;
+    private static final TipoUsuarioMapper MAPPER = new TipoUsuarioMapper();
 
     public TipoUsuarioGatewayImpl(TipoUsuarioJpaRepository repository) {
         this.repository = repository;
