@@ -21,34 +21,34 @@ public class TipoUsuarioController {
     }
 
     @PostMapping
-    public TipoUsuarioDTO criarUsuario(@RequestBody CriarTipoUsuarioDTO criarTipoUsuarioDTO) {
+    public TipoUsuarioDTO criarTipoUsuario(@RequestBody CriarTipoUsuarioDTO criarTipoUsuarioDTO) {
         var domainEntity = MAPPER.toDomainEntity(criarTipoUsuarioDTO);
         var tipoCriado = useCase.criar(domainEntity);
         return MAPPER.toDTO(tipoCriado);
     }
 
     @GetMapping("/{id}")
-    public TipoUsuarioDTO obterUsuario(@PathVariable Long id) {
+    public TipoUsuarioDTO obterTipoUsuario(@PathVariable Long id) {
         var tipoUsuario = useCase.buscarPorId(id);
         return MAPPER.toDTO(tipoUsuario);
     }
 
     @GetMapping("/todos")
-    public List<TipoUsuarioDTO> obterTodosUsuarios() {
+    public List<TipoUsuarioDTO> obterTodosTiposUsuarios() {
         return useCase.listar()
                 .stream().map(MAPPER::toDTO)
                 .toList();
     }
 
     @PatchMapping("/{id}")
-    public TipoUsuarioDTO atualizarUsuario(@PathVariable Long id, @RequestBody CriarTipoUsuarioDTO criarTipoUsuarioDTO) {
+    public TipoUsuarioDTO atualizarTipoUsuario(@PathVariable Long id, @RequestBody CriarTipoUsuarioDTO criarTipoUsuarioDTO) {
         var domainEntity = MAPPER.toDomainEntity(criarTipoUsuarioDTO);
         var tipoAtualizado = useCase.alterar(id, domainEntity.getNome());
         return MAPPER.toDTO(tipoAtualizado);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarUsuario(@PathVariable Long id) {
+    public ResponseEntity<Void> deletarTipoUsuario(@PathVariable Long id) {
         useCase.deletar(id);
         return ResponseEntity.noContent().build();
     }
