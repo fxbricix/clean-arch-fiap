@@ -1,0 +1,51 @@
+package com.fiap.cleanarchitecture.application.usecases;
+
+import com.fiap.cleanarchitecture.application.gateways.ITipoUsuarioGateway;
+import com.fiap.cleanarchitecture.application.interfaces.ITipoUsuarioUseCase;
+import com.fiap.cleanarchitecture.domain.entities.TipoUsuario;
+
+import java.util.List;
+
+public class TipoUsuarioUseCaseImpl implements ITipoUsuarioUseCase {
+
+    private final ITipoUsuarioGateway tipoUsuarioGateway;
+
+    public TipoUsuarioUseCaseImpl(ITipoUsuarioGateway tipoUsuarioGateway) {
+        this.tipoUsuarioGateway = tipoUsuarioGateway;
+    }
+
+    @Override
+    public TipoUsuario criar(TipoUsuario tipoUsuario) {
+        if (tipoUsuarioGateway.existePorNome(tipoUsuario.getNome())) {
+            throw new IllegalArgumentException("Tipo de usuário já existe com o nome: " + tipoUsuario.getNome());
+        }
+        return tipoUsuarioGateway.salvar(tipoUsuario);
+    }
+
+    @Override
+    public void deletar(Long id) {
+        if (!tipoUsuarioGateway.buscarPorId(id).isPresent()) {
+            throw new IllegalArgumentException("Tipo de usuário não encontrado com o ID: " + id);
+        }
+        tipoUsuarioGateway.excluir(id);
+    }
+
+    @Override
+    public TipoUsuario alterar(TipoUsuario tipoUsuario) {
+        if (!tipoUsuarioGateway.buscarPorId(tipoUsuario.getId()).isPresent()) {
+            throw new IllegalArgumentException("Tipo de usuário não encontrado com o ID: " + tipoUsuario.getId());
+        }
+        return tipoUsuarioGateway.atualizar(tipoUsuario);
+    }
+
+    @Override
+    public TipoUsuario buscarPorId(Long id) {
+        return tipoUsuarioGateway.buscarPorId(id).orElseThrow(
+            () -> new IllegalArgumentException("Tipo de usuário não encontrado com o ID: " + id)
+        );
+    }
+
+    public List<TipoUsuario> listar() {
+        return tipoUsuarioGateway.listar();
+    }
+}

@@ -1,5 +1,6 @@
 package com.fiap.cleanarchitecture.domain.entities;
 
+import com.fiap.cleanarchitecture.domain.exceptions.DominioException;
 import lombok.Getter;
 
 @Getter
@@ -28,9 +29,13 @@ public class TipoUsuario {
     }
 
     private static String validar(String nome) {
-        if (nome == null || nome.isBlank() || nome.length() > TAMANHO_MAXIMO_NOME) {
-            throw new IllegalArgumentException("Nome do tipo de usuário inválido");
+        if (nome == null || nome.isBlank()) {
+            throw new DominioException("O nome do tipo de usuário é obrigatório");
         }
-        return nome.trim();
+        String normalizado = nome.trim();
+        if (normalizado.length() > TAMANHO_MAXIMO_NOME) {
+            throw new DominioException("O nome deve ter no máximo " + TAMANHO_MAXIMO_NOME + " caracteres");
+        }
+        return normalizado;
     }
 }
