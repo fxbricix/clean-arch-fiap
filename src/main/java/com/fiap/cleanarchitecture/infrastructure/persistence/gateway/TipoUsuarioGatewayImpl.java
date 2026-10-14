@@ -3,7 +3,7 @@ package com.fiap.cleanarchitecture.infrastructure.persistence.gateway;
 import com.fiap.cleanarchitecture.application.exceptions.ConflitoException;
 import com.fiap.cleanarchitecture.application.gateways.ITipoUsuarioGateway;
 import com.fiap.cleanarchitecture.domain.entities.TipoUsuario;
-import com.fiap.cleanarchitecture.infrastructure.mapper.TipoUsuarioMapper;
+import com.fiap.cleanarchitecture.infrastructure.persistence.mappers.TipoUsuarioPersistenceMapper;
 import com.fiap.cleanarchitecture.infrastructure.persistence.entities.TipoUsuarioEntity;
 import com.fiap.cleanarchitecture.infrastructure.persistence.repository.TipoUsuarioJpaRepository;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -17,7 +17,7 @@ import java.util.Optional;
 public class TipoUsuarioGatewayImpl implements ITipoUsuarioGateway {
 
     private final TipoUsuarioJpaRepository repository;
-    private static final TipoUsuarioMapper MAPPER = new TipoUsuarioMapper();
+    private static final TipoUsuarioPersistenceMapper MAPPER = new TipoUsuarioPersistenceMapper();
 
     public TipoUsuarioGatewayImpl(TipoUsuarioJpaRepository repository) {
         this.repository = repository;

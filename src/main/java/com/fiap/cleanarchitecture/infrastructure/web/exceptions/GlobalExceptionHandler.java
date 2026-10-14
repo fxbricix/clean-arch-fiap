@@ -1,4 +1,4 @@
-package com.fiap.cleanarchitecture.infrastructure.web.controllers.exceptions;
+package com.fiap.cleanarchitecture.infrastructure.web.exceptions;
 
 import com.fiap.cleanarchitecture.application.exceptions.ConflitoException;
 import com.fiap.cleanarchitecture.application.exceptions.RecursoNaoEncontradoException;

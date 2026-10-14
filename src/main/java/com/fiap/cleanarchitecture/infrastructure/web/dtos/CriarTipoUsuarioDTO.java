@@ -1,4 +1,4 @@
-package com.fiap.cleanarchitecture.infrastructure.web.controllers.dtos;
+package com.fiap.cleanarchitecture.infrastructure.web.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

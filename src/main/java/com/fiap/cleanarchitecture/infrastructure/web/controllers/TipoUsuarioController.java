@@ -1,9 +1,9 @@
 package com.fiap.cleanarchitecture.infrastructure.web.controllers;
 
 import com.fiap.cleanarchitecture.application.interfaces.ITipoUsuarioUseCase;
-import com.fiap.cleanarchitecture.infrastructure.web.controllers.dtos.CriarTipoUsuarioDTO;
-import com.fiap.cleanarchitecture.infrastructure.web.controllers.dtos.TipoUsuarioDTO;
-import com.fiap.cleanarchitecture.infrastructure.mapper.TipoUsuarioMapper;
+import com.fiap.cleanarchitecture.infrastructure.web.dtos.CriarTipoUsuarioDTO;
+import com.fiap.cleanarchitecture.infrastructure.web.dtos.TipoUsuarioDTO;
+import com.fiap.cleanarchitecture.infrastructure.web.mappers.TipoUsuarioWebMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +15,7 @@ import java.util.List;
 public class TipoUsuarioController {
 
     private final ITipoUsuarioUseCase useCase;
-    private static final TipoUsuarioMapper MAPPER = new TipoUsuarioMapper();
+    private static final TipoUsuarioWebMapper MAPPER = new TipoUsuarioWebMapper();
 
     public TipoUsuarioController(ITipoUsuarioUseCase useCase) {
         this.useCase = useCase;

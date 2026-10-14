@@ -1,12 +1,10 @@
-package com.fiap.cleanarchitecture.infrastructure.mapper;
+package com.fiap.cleanarchitecture.infrastructure.persistence.mappers;
 
 import com.fiap.cleanarchitecture.domain.entities.TipoUsuario;
-import com.fiap.cleanarchitecture.infrastructure.web.controllers.dtos.CriarTipoUsuarioDTO;
-import com.fiap.cleanarchitecture.infrastructure.web.controllers.dtos.TipoUsuarioDTO;
 import com.fiap.cleanarchitecture.infrastructure.persistence.entities.TipoUsuarioEntity;
 
-public class TipoUsuarioMapper {
-    public TipoUsuarioMapper() {
+public class TipoUsuarioPersistenceMapper {
+    public TipoUsuarioPersistenceMapper() {
     }
 
     public TipoUsuario toDomainEntity(TipoUsuarioEntity tipoUsuarioEntity) {
@@ -25,19 +23,5 @@ public class TipoUsuarioMapper {
         tipoUsuarioEntity.setId(tipoUsuario.getId());
         tipoUsuarioEntity.setNome(tipoUsuario.getNome());
         return tipoUsuarioEntity;
-    }
-
-    public TipoUsuario toDomainEntity(CriarTipoUsuarioDTO criarTipoUsuarioDTO) {
-        if (criarTipoUsuarioDTO == null) {
-            return null;
-        }
-        return new TipoUsuario(null, criarTipoUsuarioDTO.nome());
-    }
-
-    public TipoUsuarioDTO toDTO(TipoUsuario tipoUsuario) {
-        if (tipoUsuario == null) {
-            return null;
-        }
-        return new TipoUsuarioDTO(tipoUsuario.getId(), tipoUsuario.getNome());
     }
 }
