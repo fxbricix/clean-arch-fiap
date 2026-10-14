@@ -47,7 +47,7 @@ public class TipoUsuarioController {
         return MAPPER.toDTO(tipoAtualizado);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarUsuario(@PathVariable Long id) {
         useCase.deletar(id);
         return ResponseEntity.noContent().build();
