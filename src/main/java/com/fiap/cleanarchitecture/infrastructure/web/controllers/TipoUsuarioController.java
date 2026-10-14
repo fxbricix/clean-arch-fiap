@@ -34,7 +34,7 @@ public class TipoUsuarioController {
         return ResponseEntity.ok(MAPPER.toDTO(tipoUsuario));
     }
 
-    @GetMapping("/todos")
+    @GetMapping("/listar")
     public ResponseEntity<List<TipoUsuarioDTO>> obterTodosTiposUsuarios() {
         return ResponseEntity.ok(useCase.listar().stream().map(MAPPER::toDTO).toList());
     }
