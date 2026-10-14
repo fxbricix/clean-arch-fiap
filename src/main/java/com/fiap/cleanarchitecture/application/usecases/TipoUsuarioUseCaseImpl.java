@@ -1,5 +1,7 @@
 package com.fiap.cleanarchitecture.application.usecases;
 
+import com.fiap.cleanarchitecture.application.exceptions.ConflitoException;
+import com.fiap.cleanarchitecture.application.exceptions.RecursoNaoEncontradoException;
 import com.fiap.cleanarchitecture.application.gateways.ITipoUsuarioGateway;
 import com.fiap.cleanarchitecture.application.interfaces.ITipoUsuarioUseCase;
 import com.fiap.cleanarchitecture.domain.entities.TipoUsuario;
@@ -17,7 +19,7 @@ public class TipoUsuarioUseCaseImpl implements ITipoUsuarioUseCase {
     @Override
     public TipoUsuario criar(TipoUsuario tipoUsuario) {
         if (tipoUsuarioGateway.existePorNome(tipoUsuario.getNome())) {
-            throw new IllegalArgumentException("Tipo de usuário já existe com o nome: " + tipoUsuario.getNome());
+            throw new ConflitoException("Tipo de usuário já existe com o nome: " + tipoUsuario.getNome());
         }
         return tipoUsuarioGateway.salvar(tipoUsuario);
     }
@@ -25,23 +27,25 @@ public class TipoUsuarioUseCaseImpl implements ITipoUsuarioUseCase {
     @Override
     public void deletar(Long id) {
         if (!tipoUsuarioGateway.buscarPorId(id).isPresent()) {
-            throw new IllegalArgumentException("Tipo de usuário não encontrado com o ID: " + id);
+            throw new RecursoNaoEncontradoException("Tipo de usuário não encontrado com o ID: " + id);
         }
         tipoUsuarioGateway.excluir(id);
     }
 
     @Override
-    public TipoUsuario alterar(TipoUsuario tipoUsuario) {
-        if (!tipoUsuarioGateway.buscarPorId(tipoUsuario.getId()).isPresent()) {
-            throw new IllegalArgumentException("Tipo de usuário não encontrado com o ID: " + tipoUsuario.getId());
+    public TipoUsuario alterar(Long id, String novoNome) {
+        if (!tipoUsuarioGateway.buscarPorId(id).isPresent()) {
+            throw new RecursoNaoEncontradoException("Tipo de usuário não encontrado com o ID: " + id);
         }
+        TipoUsuario tipoUsuario = tipoUsuarioGateway.buscarPorId(id).get();
+        tipoUsuario.alterarNome(novoNome);
         return tipoUsuarioGateway.atualizar(tipoUsuario);
     }
 
     @Override
     public TipoUsuario buscarPorId(Long id) {
         return tipoUsuarioGateway.buscarPorId(id).orElseThrow(
-            () -> new IllegalArgumentException("Tipo de usuário não encontrado com o ID: " + id)
+            () -> new RecursoNaoEncontradoException("Tipo de usuário não encontrado com o ID: " + id)
         );
     }
 
