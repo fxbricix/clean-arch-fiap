@@ -4,6 +4,7 @@ import com.fiap.cleanarchitecture.application.interfaces.ITipoUsuarioUseCase;
 import com.fiap.cleanarchitecture.infrastructure.web.controllers.dtos.CriarTipoUsuarioDTO;
 import com.fiap.cleanarchitecture.infrastructure.web.controllers.dtos.TipoUsuarioDTO;
 import com.fiap.cleanarchitecture.infrastructure.mapper.TipoUsuarioMapper;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,30 +22,28 @@ public class TipoUsuarioController {
     }
 
     @PostMapping
-    public TipoUsuarioDTO criarTipoUsuario(@RequestBody CriarTipoUsuarioDTO criarTipoUsuarioDTO) {
+    public ResponseEntity<TipoUsuarioDTO> criarTipoUsuario(@RequestBody @Valid CriarTipoUsuarioDTO criarTipoUsuarioDTO) {
         var domainEntity = MAPPER.toDomainEntity(criarTipoUsuarioDTO);
         var tipoCriado = useCase.criar(domainEntity);
-        return MAPPER.toDTO(tipoCriado);
+        return ResponseEntity.status(201).body(MAPPER.toDTO(tipoCriado));
     }
 
     @GetMapping("/{id}")
-    public TipoUsuarioDTO obterTipoUsuario(@PathVariable Long id) {
+    public ResponseEntity<TipoUsuarioDTO> obterTipoUsuario(@PathVariable Long id) {
         var tipoUsuario = useCase.buscarPorId(id);
-        return MAPPER.toDTO(tipoUsuario);
+        return ResponseEntity.ok(MAPPER.toDTO(tipoUsuario));
     }
 
     @GetMapping("/todos")
-    public List<TipoUsuarioDTO> obterTodosTiposUsuarios() {
-        return useCase.listar()
-                .stream().map(MAPPER::toDTO)
-                .toList();
+    public ResponseEntity<List<TipoUsuarioDTO>> obterTodosTiposUsuarios() {
+        return ResponseEntity.ok(useCase.listar().stream().map(MAPPER::toDTO).toList());
     }
 
     @PatchMapping("/{id}")
-    public TipoUsuarioDTO atualizarTipoUsuario(@PathVariable Long id, @RequestBody CriarTipoUsuarioDTO criarTipoUsuarioDTO) {
+    public ResponseEntity<TipoUsuarioDTO> atualizarTipoUsuario(@PathVariable Long id, @RequestBody @Valid CriarTipoUsuarioDTO criarTipoUsuarioDTO) {
         var domainEntity = MAPPER.toDomainEntity(criarTipoUsuarioDTO);
         var tipoAtualizado = useCase.alterar(id, domainEntity.getNome());
-        return MAPPER.toDTO(tipoAtualizado);
+        return ResponseEntity.ok(MAPPER.toDTO(tipoAtualizado));
     }
 
     @DeleteMapping("/{id}")

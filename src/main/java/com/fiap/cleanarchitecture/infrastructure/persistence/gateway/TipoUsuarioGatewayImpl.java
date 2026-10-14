@@ -6,9 +6,9 @@ import com.fiap.cleanarchitecture.domain.entities.TipoUsuario;
 import com.fiap.cleanarchitecture.infrastructure.mapper.TipoUsuarioMapper;
 import com.fiap.cleanarchitecture.infrastructure.persistence.entities.TipoUsuarioEntity;
 import com.fiap.cleanarchitecture.infrastructure.persistence.repository.TipoUsuarioJpaRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
