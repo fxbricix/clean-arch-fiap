@@ -1,10 +1,13 @@
 package com.fiap.cleanarchitecture.infrastructure.persistence.gateway;
 
+import com.fiap.cleanarchitecture.application.exceptions.ConflitoException;
 import com.fiap.cleanarchitecture.application.gateways.ITipoUsuarioGateway;
 import com.fiap.cleanarchitecture.domain.entities.TipoUsuario;
 import com.fiap.cleanarchitecture.infrastructure.mapper.TipoUsuarioMapper;
 import com.fiap.cleanarchitecture.infrastructure.persistence.entities.TipoUsuarioEntity;
 import com.fiap.cleanarchitecture.infrastructure.persistence.repository.TipoUsuarioJpaRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -46,8 +49,15 @@ public class TipoUsuarioGatewayImpl implements ITipoUsuarioGateway {
     }
 
     @Override
+    @Transactional
     public void excluir(Long id) {
-        repository.deleteById(id);
+        try {
+            repository.deleteById(id);
+            repository.flush();
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflitoException(
+                    "Tipo de usuário em uso por usuários cadastrados e não pode ser excluído");
+        }
     }
 
     @Override
