@@ -4,15 +4,15 @@ import com.fiap.cleanarchitecture.IntegrationTestBase;
 import com.fiap.cleanarchitecture.infrastructure.persistence.entities.TipoUsuarioEntity;
 import com.fiap.cleanarchitecture.infrastructure.persistence.repository.TipoUsuarioJpaRepository;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
+import java.util.UUID;
+
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -30,25 +30,20 @@ class TipoUsuarioControllerTest extends IntegrationTestBase {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @BeforeEach
-    void limparDados() {
-        jdbcTemplate.update("DELETE FROM usuario");
-        repository.deleteAll();
-    }
-
     @Test
     @DisplayName("Deve criar um tipo de usuário com sucesso")
     void deveCriarTipoUsuarioComSucesso() throws Exception {
+        String nome = nomeUnico();
         mockMvc.perform(post("/v1/tipo-usuarios")
                         .contentType("application/json")
                         .content("""
-                                {"nome": "ADMIN"}
-                                """))
+                                {"nome": "%s"}
+                                """.formatted(nome)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.nome").value("ADMIN"));
+                .andExpect(jsonPath("$.nome").value(nome));
 
-        assertTrue(repository.existsByNome("ADMIN"));
+        assertTrue(repository.existsByNome(nome));
     }
 
     @Test
@@ -78,25 +73,27 @@ class TipoUsuarioControllerTest extends IntegrationTestBase {
     @Test
     @DisplayName("Deve retornar conflito ao criar tipo de usuário duplicado")
     void deveRetornarConflitoAoCriarTipoUsuarioDuplicado() throws Exception {
-        repository.save(tipoUsuario("ADMIN"));
+        String nome = nomeUnico();
+        repository.save(tipoUsuario(nome));
 
         mockMvc.perform(post("/v1/tipo-usuarios")
                         .contentType("application/json")
                         .content("""
-                                {"nome": "ADMIN"}
-                                """))
+                                {"nome": "%s"}
+                                """.formatted(nome)))
                 .andExpect(status().isConflict());
     }
 
     @Test
     @DisplayName("Deve obter um tipo de usuário pelo ID")
     void deveObterTipoUsuarioPeloId() throws Exception {
-        var tipoUsuario = repository.save(tipoUsuario("ADMIN"));
+        String nome = nomeUnico();
+        var tipoUsuario = repository.save(tipoUsuario(nome));
 
         mockMvc.perform(get("/v1/tipo-usuarios/{id}", tipoUsuario.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(tipoUsuario.getId()))
-                .andExpect(jsonPath("$.nome").value("ADMIN"));
+                .andExpect(jsonPath("$.nome").value(nome));
     }
 
     @Test
@@ -109,30 +106,33 @@ class TipoUsuarioControllerTest extends IntegrationTestBase {
     @Test
     @DisplayName("Deve listar todos os tipos de usuário")
     void deveListarTodosOsTiposUsuario() throws Exception {
-        repository.save(tipoUsuario("ADMIN"));
-        repository.save(tipoUsuario("CLIENTE"));
+        String nomeA = nomeUnico();
+        String nomeB = nomeUnico();
+        repository.save(tipoUsuario(nomeA));
+        repository.save(tipoUsuario(nomeB));
 
         mockMvc.perform(get("/v1/tipo-usuarios/listar"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[*].nome", containsInAnyOrder("ADMIN", "CLIENTE")));
+                .andExpect(jsonPath("$[*].nome", hasItems(nomeA, nomeB)));
     }
 
     @Test
     @DisplayName("Deve alterar o nome de um tipo de usuário")
     void deveAlterarTipoUsuario() throws Exception {
-        var tipoUsuario = repository.save(tipoUsuario("ADMIN"));
+        String nome = nomeUnico();
+        String novoNome = nomeUnico();
+        var tipoUsuario = repository.save(tipoUsuario(nome));
 
         mockMvc.perform(patch("/v1/tipo-usuarios/{id}", tipoUsuario.getId())
                         .contentType("application/json")
                         .content("""
-                                {"nome": "GERENTE"}
-                                """))
+                                {"nome": "%s"}
+                                """.formatted(novoNome)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(tipoUsuario.getId()))
-                .andExpect(jsonPath("$.nome").value("GERENTE"));
+                .andExpect(jsonPath("$.nome").value(novoNome));
 
-        assertTrue(repository.existsByNome("GERENTE"));
+        assertTrue(repository.existsByNome(novoNome));
     }
 
     @Test
@@ -149,21 +149,23 @@ class TipoUsuarioControllerTest extends IntegrationTestBase {
     @Test
     @DisplayName("Deve retornar conflito ao alterar para um nome já utilizado")
     void deveRetornarConflitoAoAlterarParaNomeExistente() throws Exception {
-        var tipoUsuario = repository.save(tipoUsuario("ADMIN"));
-        repository.save(tipoUsuario("CLIENTE"));
+        String nomeOriginal = nomeUnico();
+        String nomeExistente = nomeUnico();
+        var tipoUsuario = repository.save(tipoUsuario(nomeOriginal));
+        repository.save(tipoUsuario(nomeExistente));
 
         mockMvc.perform(patch("/v1/tipo-usuarios/{id}", tipoUsuario.getId())
                         .contentType("application/json")
                         .content("""
-                                {"nome": "CLIENTE"}
-                                """))
+                                {"nome": "%s"}
+                                """.formatted(nomeExistente)))
                 .andExpect(status().isConflict());
     }
 
     @Test
     @DisplayName("Deve excluir um tipo de usuário")
     void deveExcluirTipoUsuario() throws Exception {
-        var tipoUsuario = repository.save(tipoUsuario("ADMIN"));
+        var tipoUsuario = repository.save(tipoUsuario(nomeUnico()));
 
         mockMvc.perform(delete("/v1/tipo-usuarios/{id}", tipoUsuario.getId()))
                 .andExpect(status().isNoContent());
@@ -181,13 +183,17 @@ class TipoUsuarioControllerTest extends IntegrationTestBase {
     @Test
     @DisplayName("Deve retornar conflito ao excluir um tipo de usuário em uso")
     void deveRetornarConflitoAoExcluirTipoUsuarioEmUso() throws Exception {
-        var tipoUsuario = repository.save(tipoUsuario("ADMIN"));
+        var tipoUsuario = repository.save(tipoUsuario(nomeUnico()));
         jdbcTemplate.update(
                 "INSERT INTO usuario (nome, email, tipo_usuario_id) VALUES (?, ?, ?)",
-                "Usuário de teste", "teste@example.com", tipoUsuario.getId());
+                "Usuário de teste", UUID.randomUUID() + "@teste.com", tipoUsuario.getId());
 
         mockMvc.perform(delete("/v1/tipo-usuarios/{id}", tipoUsuario.getId()))
                 .andExpect(status().isConflict());
+    }
+
+    private static String nomeUnico() {
+        return "T_" + UUID.randomUUID().toString().substring(0, 8);
     }
 
     private TipoUsuarioEntity tipoUsuario(String nome) {

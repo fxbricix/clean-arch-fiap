@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -88,6 +89,7 @@ class TipoUsuarioGatewayImplTest {
             gateway.excluir(1L);
 
             verify(repository).deleteById(1L);
+            verify(repository).flush();
         }
 
         @Test
@@ -109,14 +111,9 @@ class TipoUsuarioGatewayImplTest {
         @Test
         @DisplayName("Deve lançar exceção ao tentar deletar um tipo de usuário em uso")
         void deveLancarExcecaoAoDeletarTipoUsuarioEmUso() {
-            doThrow(new DataIntegrityViolationException("Tipo de usuário em uso por usuários cadastrados e não pode ser excluído")).when(repository).deleteById(1L);
+            doThrow(new DataIntegrityViolationException("fk")).when(repository).deleteById(1L);
 
-            try {
-                gateway.excluir(1L);
-            } catch (Exception e) {
-                assertEquals(ConflitoException.class, e.getClass());
-            }
-
+            assertThrows(ConflitoException.class, () -> gateway.excluir(1L));
             verify(repository).deleteById(1L);
         }
     }
