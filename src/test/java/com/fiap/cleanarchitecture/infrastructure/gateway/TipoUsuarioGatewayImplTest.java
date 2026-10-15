@@ -18,6 +18,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class TipoUsuarioGatewayImplTest {
+
     private final TipoUsuarioJpaRepository repository = mock(TipoUsuarioJpaRepository.class);
     private final TipoUsuarioGatewayImpl gateway = new TipoUsuarioGatewayImpl(repository);
 
