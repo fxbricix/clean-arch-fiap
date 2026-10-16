@@ -6,6 +6,7 @@ import com.fiap.cleanarchitecture.domain.exceptions.DominioException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -25,6 +26,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DominioException.class)
     public ResponseEntity<ProblemDetail> dominio(DominioException e) {
         return resposta(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ProblemDetail> metodoArgumentoInvalido(MethodArgumentNotValidException e) {
+        return resposta(HttpStatus.BAD_REQUEST, "Dados inválidos");
     }
 
     private ResponseEntity<ProblemDetail> resposta(HttpStatus status, String detalhe) {
