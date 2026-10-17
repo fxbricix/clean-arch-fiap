@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IUsuarioUseCase {
-    Usuario criarUsuario(Usuario usuario);
-    Optional<Usuario> buscarUsuarioPorId(Long id);
-    Usuario atualizarTipoDoUsuario(Long id, TipoUsuario tipoAtualizado);
-    List<Usuario> listarUsuarios();
+    Usuario criar(String nome, String email, Long tipoUsuarioId);
+    Usuario buscarPorId(Long id);
+    List<Usuario> listar();
+    Usuario associarTipo(Long usuarioId, Long tipoUsuarioId);
 }

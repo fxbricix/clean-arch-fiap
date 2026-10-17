@@ -10,6 +10,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -29,8 +32,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ProblemDetail> metodoArgumentoInvalido(MethodArgumentNotValidException e) {
-        return resposta(HttpStatus.BAD_REQUEST, "Dados inválidos");
+    public ResponseEntity<ProblemDetail> validacao(MethodArgumentNotValidException e) {
+        Map<String, String> erros = new LinkedHashMap<>();
+        e.getBindingResult().getFieldErrors().forEach(f ->
+                erros.putIfAbsent(f.getField(), f.getDefaultMessage() != null ? f.getDefaultMessage() : "inválido"));
+        ProblemDetail problema = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Dados inválidos");
+        problema.setProperty("erros", erros);
+        return ResponseEntity.badRequest().body(problema);
     }
 
     private ResponseEntity<ProblemDetail> resposta(HttpStatus status, String detalhe) {

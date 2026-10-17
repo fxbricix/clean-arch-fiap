@@ -1,38 +1,60 @@
 package com.fiap.cleanarchitecture.application.usecases;
 
+import com.fiap.cleanarchitecture.application.exceptions.ConflitoException;
 import com.fiap.cleanarchitecture.application.exceptions.RecursoNaoEncontradoException;
+import com.fiap.cleanarchitecture.application.gateways.ITipoUsuarioGateway;
 import com.fiap.cleanarchitecture.application.gateways.IUsuarioGateway;
 import com.fiap.cleanarchitecture.application.interfaces.IUsuarioUseCase;
 import com.fiap.cleanarchitecture.domain.entities.TipoUsuario;
 import com.fiap.cleanarchitecture.domain.entities.Usuario;
+import com.fiap.cleanarchitecture.domain.exceptions.DominioException;
+import com.fiap.cleanarchitecture.domain.valueobjects.Email;
 
 import java.util.List;
-import java.util.Optional;
 
 public class UsuarioUseCaseImpl implements IUsuarioUseCase {
 
-    private IUsuarioGateway usuarioGateway;
+    private final IUsuarioGateway usuarioGateway;
+    private final ITipoUsuarioGateway tipoUsuarioGateway;
+
+    public UsuarioUseCaseImpl(IUsuarioGateway usuarioGateway, ITipoUsuarioGateway tipoUsuarioGateway) {
+        this.usuarioGateway = usuarioGateway;
+        this.tipoUsuarioGateway = tipoUsuarioGateway;
+    }
 
     @Override
-    public Usuario criarUsuario(Usuario usuario) {
+    public Usuario criar(String nome, String email, Long tipoUsuarioId) {
+        TipoUsuario tipo = buscarTipo(tipoUsuarioId);
+        Usuario usuario = new Usuario(nome, new Email(email), tipo);
+        if (usuarioGateway.existePorEmail(usuario.getEmail().valor())) {
+            throw new ConflitoException("Já existe um usuário com o e-mail " + usuario.getEmail().valor());
+        }
         return usuarioGateway.salvar(usuario);
     }
 
     @Override
-    public Optional<Usuario> buscarUsuarioPorId(Long id) {
-        return Optional.of(usuarioGateway.buscarPorId(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado com o ID: " + id)));
+    public Usuario buscarPorId(Long id) {
+        return usuarioGateway.buscarPorId(id).orElseThrow(
+                () -> new RecursoNaoEncontradoException("Usuário não encontrado: " + id));
     }
 
     @Override
-    public Usuario atualizarTipoDoUsuario(Long id, TipoUsuario tipoAtualizado) {
-        Usuario usuario = buscarUsuarioPorId(id).get();
-        usuario.alterarTipo(tipoAtualizado);
-        return usuarioGateway.salvar(usuario);
-    }
-
-    @Override
-    public List<Usuario> listarUsuarios() {
+    public List<Usuario> listar() {
         return usuarioGateway.listar();
+    }
+
+    @Override
+    public Usuario associarTipo(Long usuarioId, Long tipoUsuarioId) {
+        Usuario usuario = buscarPorId(usuarioId);
+        usuario.alterarTipo(buscarTipo(tipoUsuarioId));
+        return usuarioGateway.salvar(usuario);
+    }
+
+    private TipoUsuario buscarTipo(Long id) {
+        if (id == null) {
+            throw new DominioException("O tipo de usuário é obrigatório");
+        }
+        return tipoUsuarioGateway.buscarPorId(id).orElseThrow(
+                () -> new RecursoNaoEncontradoException("Tipo de usuário não encontrado: " + id));
     }
 }

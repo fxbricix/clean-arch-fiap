@@ -9,4 +9,5 @@ public interface IUsuarioGateway {
     Usuario salvar(Usuario usuario);
     Optional<Usuario> buscarPorId(Long id);
     List<Usuario> listar();
+    boolean existePorEmail(String email);
 }
