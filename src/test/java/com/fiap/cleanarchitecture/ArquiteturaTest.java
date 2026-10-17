@@ -24,4 +24,14 @@ class ArquiteturaTest {
             .should().dependOnClassesThat().resideInAnyPackage(
                     "..infrastructure..",
                     "org.springframework..", "jakarta..", "com.fasterxml..");
+
+    @ArchTest
+    static final ArchRule persistenciaNaoDependeDaWeb = noClasses()
+            .that().resideInAPackage("..infrastructure.persistence..")
+            .should().dependOnClassesThat().resideInAPackage("..infrastructure.web..");
+
+    @ArchTest
+    static final ArchRule webNaoDependeDaPersistencia = noClasses()
+            .that().resideInAPackage("..infrastructure.web..")
+            .should().dependOnClassesThat().resideInAPackage("..infrastructure.persistence..");
 }
