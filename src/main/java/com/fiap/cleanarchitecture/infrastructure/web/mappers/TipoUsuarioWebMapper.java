@@ -16,6 +16,13 @@ public class TipoUsuarioWebMapper {
         return new TipoUsuario(null, criarTipoUsuarioDTO.nome());
     }
 
+    public TipoUsuario toDomainEntity(TipoUsuarioDTO tipoUsuarioDTO) {
+        if (tipoUsuarioDTO == null) {
+            return null;
+        }
+        return new TipoUsuario(tipoUsuarioDTO.id(), tipoUsuarioDTO.nome());
+    }
+
     public TipoUsuarioDTO toDTO(TipoUsuario tipoUsuario) {
         if (tipoUsuario == null) {
             return null;
