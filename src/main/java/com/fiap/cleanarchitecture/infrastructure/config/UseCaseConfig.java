@@ -1,8 +1,11 @@
 package com.fiap.cleanarchitecture.infrastructure.config;
 
 import com.fiap.cleanarchitecture.application.gateways.ITipoUsuarioGateway;
+import com.fiap.cleanarchitecture.application.gateways.IUsuarioGateway;
 import com.fiap.cleanarchitecture.application.interfaces.ITipoUsuarioUseCase;
+import com.fiap.cleanarchitecture.application.interfaces.IUsuarioUseCase;
 import com.fiap.cleanarchitecture.application.usecases.TipoUsuarioUseCaseImpl;
+import com.fiap.cleanarchitecture.application.usecases.UsuarioUseCaseImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,5 +15,11 @@ public class UseCaseConfig {
     @Bean
     public ITipoUsuarioUseCase tipoUsuarioUseCase(ITipoUsuarioGateway tipoUsuarioGateway) {
         return new TipoUsuarioUseCaseImpl(tipoUsuarioGateway);
+    }
+
+    @Bean
+    public IUsuarioUseCase usuarioUseCase(IUsuarioGateway usuarioGateway,
+                                          ITipoUsuarioGateway tipoUsuarioGateway) {
+        return new UsuarioUseCaseImpl(usuarioGateway, tipoUsuarioGateway);
     }
 }
