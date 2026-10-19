@@ -26,18 +26,29 @@ public class TipoUsuarioUseCaseImpl implements ITipoUsuarioUseCase {
 
     @Override
     public void deletar(Long id) {
-        buscarPorId(id);
+        TipoUsuario tipo = buscarPorId(id);
+        if (tipo.ehUsuarioSistemico()) {
+            throw new ConflitoException("Não é permitido excluir tipos de usuário sistêmicos.");
+        }
         tipoUsuarioGateway.excluir(id);
     }
 
     @Override
     public TipoUsuario alterar(Long id, String novoNome) {
         TipoUsuario tipo = buscarPorId(id);
-        String nomeAnterior = tipo.getNome();
-        tipo.alterarNome(novoNome);
-        if (!tipo.getNome().equals(nomeAnterior) && tipoUsuarioGateway.existePorNome(tipo.getNome())) {
-            throw new ConflitoException("Tipo de usuário já existe com o nome: " + tipo.getNome());
+        if (tipo.ehUsuarioSistemico()) {
+            throw new ConflitoException("Não é permitido alterar o nome de tipos de usuário sistêmicos.");
         }
+        TipoUsuario novoTipoUsuario = new TipoUsuario(novoNome);
+        if (novoTipoUsuario.ehUsuarioSistemico()) {
+            throw new ConflitoException("Não é permitido alterar o nome de tipos de usuário sistêmicos.");
+        }
+        String nomeAnterior = tipo.getNome();
+        if (!novoTipoUsuario.getNome().equals(nomeAnterior)
+                && tipoUsuarioGateway.existePorNome(novoTipoUsuario.getNome())) {
+            throw new ConflitoException("Tipo de usuário já existe com o nome: " + novoTipoUsuario.getNome());
+        }
+        tipo.alterarNome(novoTipoUsuario.getNome());
         return tipoUsuarioGateway.atualizar(tipo);
     }
 

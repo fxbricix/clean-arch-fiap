@@ -28,6 +28,10 @@ public class TipoUsuario {
         return DONO_RESTAURANTE.equals(nome);
     }
 
+    public boolean ehUsuarioSistemico(){
+        return this.nome.equals("CLIENTE") || this.nome.equals("DONO_RESTAURANTE");
+    }
+
     private static String validar(String nome) {
         if (nome == null || nome.isBlank()) {
             throw new DominioException("O nome do tipo de usuário é obrigatório");

@@ -41,7 +41,7 @@ public class TipoUsuarioUseCaseImplTest {
         @Test
         @DisplayName("Deve deletar um tipo de usuário com sucesso")
         public void deveDeletarTipoUsuarioComSucesso() {
-            when(gateway.buscarPorId(1L)).thenReturn(Optional.of(new TipoUsuario("CLIENTE")));
+            when(gateway.buscarPorId(1L)).thenReturn(Optional.of(new TipoUsuario("TIPO_NAO_SISTEMICO")));
 
             useCase.deletar(1L);
 
@@ -51,7 +51,7 @@ public class TipoUsuarioUseCaseImplTest {
         @Test
         @DisplayName("Deve alterar um tipo de usuário com sucesso")
         public void deveAlterarTipoUsuarioComSucesso() {
-            when(gateway.buscarPorId(1L)).thenReturn(Optional.of(new TipoUsuario("CLIENTE")));
+            when(gateway.buscarPorId(1L)).thenReturn(Optional.of(new TipoUsuario("GERENTE")));
             when(gateway.existePorNome("ADMIN")).thenReturn(false);
             when(gateway.atualizar(any(TipoUsuario.class))).thenAnswer(i -> i.getArguments()[0]);
 
@@ -63,14 +63,14 @@ public class TipoUsuarioUseCaseImplTest {
         @Test
         @DisplayName("Deve permitir manter o mesmo nome")
         public void devePermitirManterMesmoNome() {
-            TipoUsuario tipo = new TipoUsuario("CLIENTE");
+            TipoUsuario tipo = new TipoUsuario("USER_NAO_SIST");
             when(gateway.buscarPorId(1L)).thenReturn(Optional.of(tipo));
             when(gateway.atualizar(any(TipoUsuario.class)))
                     .thenAnswer(invocacao -> invocacao.getArgument(0));
 
-            TipoUsuario resultado = useCase.alterar(1L, "CLIENTE");
+            TipoUsuario resultado = useCase.alterar(1L, "USER_NAO_SIST");
 
-            assertEquals("CLIENTE", resultado.getNome());
+            assertEquals("USER_NAO_SIST", resultado.getNome());
             verify(gateway, never()).existePorNome(anyString());
             verify(gateway).atualizar(tipo);
         }
@@ -118,10 +118,49 @@ public class TipoUsuarioUseCaseImplTest {
         }
 
         @Test
+        @DisplayName("Não deve deletar um tipo de usuário sistêmico")
+        public void naoDeveDeletarTipoUsuarioSistemico() {
+            when(gateway.buscarPorId(1L)).thenReturn(Optional.of(new TipoUsuario(1L, "CLIENTE")));
+
+            ConflitoException exception = assertThrows(ConflitoException.class, () -> useCase.deletar(1L));
+
+            assertEquals("Não é permitido excluir tipos de usuário sistêmicos.", exception.getMessage());
+            verify(gateway, never()).excluir(1L);
+        }
+
+        @Test
         @DisplayName("Não deve alterar um tipo de usuário que não existe")
         public void naoDeveAlterarTipoUsuarioQueNaoExiste() {
             when(gateway.buscarPorId(1L)).thenReturn(Optional.empty());
             assertThrows(RecursoNaoEncontradoException.class, () -> useCase.alterar(1L, "ADMIN"));
+        }
+
+        @Test
+        @DisplayName("Não deve alterar o nome de um tipo de usuário sistêmico")
+        public void naoDeveAlterarNomeTipoUsuarioSistemico() {
+            TipoUsuario tipoSistemico = new TipoUsuario(1L, "CLIENTE");
+            when(gateway.buscarPorId(1L)).thenReturn(Optional.of(tipoSistemico));
+
+            ConflitoException exception = assertThrows(ConflitoException.class,
+                    () -> useCase.alterar(1L, "CLIENTE_CUSTOMIZADO"));
+
+            assertEquals("Não é permitido alterar o nome de tipos de usuário sistêmicos.", exception.getMessage());
+            assertEquals("CLIENTE", tipoSistemico.getNome());
+            verify(gateway, never()).atualizar(any(TipoUsuario.class));
+        }
+
+        @Test
+        @DisplayName("Não deve alterar o nome para um tipo de usuário sistêmico")
+        public void naoDeveAlterarNomeParaTipoUsuarioSistemico() {
+            TipoUsuario tipo = new TipoUsuario(1L, "GERENTE");
+            when(gateway.buscarPorId(1L)).thenReturn(Optional.of(tipo));
+
+            ConflitoException exception = assertThrows(ConflitoException.class,
+                    () -> useCase.alterar(1L, "CLIENTE"));
+
+            assertEquals("Não é permitido alterar o nome de tipos de usuário sistêmicos.", exception.getMessage());
+            assertEquals("GERENTE", tipo.getNome());
+            verify(gateway, never()).atualizar(any(TipoUsuario.class));
         }
 
         @Test
