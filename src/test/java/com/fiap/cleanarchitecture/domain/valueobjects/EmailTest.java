@@ -18,6 +18,12 @@ class EmailTest {
     }
 
     @Test
+    @DisplayName("Deve considerar iguais e-mails normalizados com o mesmo valor")
+    void deveConsiderarIguaisEmailsEquivalentes() {
+        assertEquals(new Email("Usuario@Fiap.com"), new Email(" usuario@fiap.com "));
+    }
+
+    @Test
     @DisplayName("Deve aceitar e-mail com o tamanho máximo permitido")
     void deveAceitarEmailComTamanhoMaximo() {
         String valor = "a".repeat(155) + "@b.co";

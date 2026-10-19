@@ -192,6 +192,30 @@ class TipoUsuarioControllerTest extends IntegrationTestBase {
                 .andExpect(status().isConflict());
     }
 
+    @Test
+    @DisplayName("Deve retornar conflito ao excluir o tipo de usuário CLIENTE")
+    void deveRetornarConflitoAoExcluirTipoUsuarioCliente() throws Exception {
+        Long tipoClienteId = jdbcTemplate.queryForObject(
+                "SELECT id FROM tipo_usuario WHERE nome = ?", Long.class, "CLIENTE");
+
+        mockMvc.perform(delete("/v1/tipo-usuarios/{id}", tipoClienteId))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    @DisplayName("Deve retornar conflito ao alterar o tipo de usuário CLIENTE")
+    void deveRetornarConflitoAoAlterarTipoUsuarioCliente() throws Exception {
+        Long tipoClienteId = jdbcTemplate.queryForObject(
+                "SELECT id FROM tipo_usuario WHERE nome = ?", Long.class, "CLIENTE");
+
+        mockMvc.perform(patch("/v1/tipo-usuarios/{id}", tipoClienteId)
+                        .contentType("application/json")
+                        .content("""
+                                {"nome": "CLIENTE_ALTERADO"}
+                                """))
+                .andExpect(status().isConflict());
+    }
+
     private static String nomeUnico() {
         return "T_" + UUID.randomUUID().toString().substring(0, 8);
     }

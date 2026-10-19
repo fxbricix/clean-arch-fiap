@@ -6,7 +6,8 @@ import lombok.Getter;
 @Getter
 public class TipoUsuario {
     private static final int TAMANHO_MAXIMO_NOME = 50;
-    private static final String DONO_RESTAURANTE = "DONO_RESTAURANTE";
+    public static final String CLIENTE = "CLIENTE";
+    public static final String DONO_RESTAURANTE = "DONO_RESTAURANTE";
 
     private final Long id;
     private String nome;
@@ -28,8 +29,8 @@ public class TipoUsuario {
         return DONO_RESTAURANTE.equals(nome);
     }
 
-    public boolean ehUsuarioSistemico(){
-        return this.nome.equals("CLIENTE") || this.nome.equals("DONO_RESTAURANTE");
+    public boolean ehTipoSistemico() {
+        return CLIENTE.equals(nome) || DONO_RESTAURANTE.equals(nome);
     }
 
     private static String validar(String nome) {

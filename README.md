@@ -30,7 +30,7 @@ Esta fase entrega o gerenciamento de **tipos de usuário**, o cadastro de **rest
 |---|---|
 | Infraestrutura (Docker Compose, Flyway, Swagger) | ✅ pronto |
 | Cadastro de **tipo de usuário** (CRUD) | ✅ pronto |
-| **Usuário** e associação ao tipo de usuário | 🚧 em desenvolvimento |
+| **Usuário** e associação ao tipo de usuário | ✅ pronto |
 | Cadastro de **restaurante** (CRUD) | 🚧 planejado |
 | Cadastro de **item do cardápio** (CRUD) | 🚧 planejado |
 | Collection do Postman | 🚧 planejado |
@@ -133,6 +133,7 @@ Todas as rotas são prefixadas com `/v1`. A documentação interativa está no S
 **Regras do campo `nome`:** obrigatório (não pode ser vazio ou só espaços), no máximo 50 caracteres e **único**. Espaços nas pontas são removidos.
 
 Os tipos `CLIENTE` e `DONO_RESTAURANTE` são criados pela migration `V1`.
+Esses tipos sistêmicos não podem ser alterados nem excluídos.
 
 **Exemplo: criar**
 
@@ -165,7 +166,7 @@ Os erros seguem o formato **RFC 7807** (`application/problem+json`):
 |---|---|
 | `400 Bad Request` | corpo inválido (campo obrigatório ausente, tamanho excedido) ou regra de domínio violada |
 | `404 Not Found` | o recurso pedido não existe |
-| `409 Conflict` | nome já cadastrado, ou tentativa de excluir um tipo que está em uso por usuários |
+| `409 Conflict` | nome já cadastrado, tentativa de excluir um tipo em uso por usuários, ou alteração/exclusão de tipo sistêmico |
 
 ```json
 {
@@ -177,11 +178,16 @@ Os erros seguem o formato **RFC 7807** (`application/problem+json`):
 }
 ```
 
+### Usuários
+
+| Recurso | Rotas | Campos |
+|---|---|---|
+| Usuário | `POST /v1/usuarios`, `GET /v1/usuarios/{id}`, `GET /v1/usuarios/listar`, `PUT /v1/usuarios/{usuarioId}/tipo/{tipoUsuarioId}` | nome, e-mail, tipo de usuário |
+
 ### Endpoints planejados
 
 | Recurso | Rotas previstas | Campos (conforme o enunciado) |
 |---|---|---|
-| Usuário | `POST/GET /v1/usuarios`, `GET /v1/usuarios/{id}`, `PUT /v1/usuarios/{id}/tipo` | nome, e-mail, tipo de usuário |
 | Restaurante | CRUD em `/v1/restaurantes` | nome, endereço, tipo de cozinha, horário de funcionamento, dono (usuário do tipo `DONO_RESTAURANTE`) |
 | Item do cardápio | CRUD em `/v1/restaurantes/{id}/itens` | nome, descrição, preço, disponível apenas no local, caminho da foto |
 

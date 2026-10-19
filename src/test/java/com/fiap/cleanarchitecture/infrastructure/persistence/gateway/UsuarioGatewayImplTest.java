@@ -1,4 +1,4 @@
-package com.fiap.cleanarchitecture.infrastructure.gateway;
+package com.fiap.cleanarchitecture.infrastructure.persistence.gateway;
 
 import com.fiap.cleanarchitecture.application.exceptions.ConflitoException;
 import com.fiap.cleanarchitecture.domain.entities.TipoUsuario;

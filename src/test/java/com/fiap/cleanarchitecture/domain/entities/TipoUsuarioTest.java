@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -77,5 +78,19 @@ public class TipoUsuarioTest {
     public void deveVerificarDonoDeRestaurante() {
         TipoUsuario tipoUsuario = new TipoUsuario("DONO_RESTAURANTE");
         assertTrue(tipoUsuario.ehDonoDeRestaurante());
+    }
+
+    @Test
+    @DisplayName("Deve identificar os tipos de usuário sistêmicos")
+    public void deveVerificarTipoSistemico() {
+        assertTrue(new TipoUsuario(TipoUsuario.CLIENTE).ehTipoSistemico());
+        assertTrue(new TipoUsuario(TipoUsuario.DONO_RESTAURANTE).ehTipoSistemico());
+        assertFalse(new TipoUsuario("ADMIN").ehTipoSistemico());
+    }
+
+    @Test
+    @DisplayName("Deve identificar quando o tipo não é de dono de restaurante")
+    public void deveVerificarQueNaoEhDonoDeRestaurante() {
+        assertFalse(new TipoUsuario(TipoUsuario.CLIENTE).ehDonoDeRestaurante());
     }
 }
