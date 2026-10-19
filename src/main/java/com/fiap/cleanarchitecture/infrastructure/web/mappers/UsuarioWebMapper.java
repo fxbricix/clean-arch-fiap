@@ -28,20 +28,4 @@ public class UsuarioWebMapper {
                 tipoUsuarioDTO
         );
     }
-
-    public Usuario toDomain(UsuarioDTO usuarioDTO) {
-        if (usuarioDTO == null) {
-            return null;
-        }
-
-        Email email = new Email(usuarioDTO.email().toString());
-        TipoUsuario tipoUsuario = tipoUsuarioWebMapper.toDomainEntity(usuarioDTO.tipoUsuario());
-
-        return new Usuario(
-                usuarioDTO.id(),
-                usuarioDTO.name(),
-                email,
-                tipoUsuario
-        );
-    }
 }

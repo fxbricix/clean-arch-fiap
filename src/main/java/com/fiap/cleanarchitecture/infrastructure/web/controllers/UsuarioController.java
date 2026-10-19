@@ -5,6 +5,9 @@ import com.fiap.cleanarchitecture.domain.entities.Usuario;
 import com.fiap.cleanarchitecture.infrastructure.web.dtos.CriarUsuarioDTO;
 import com.fiap.cleanarchitecture.infrastructure.web.dtos.UsuarioDTO;
 import com.fiap.cleanarchitecture.infrastructure.web.mappers.UsuarioWebMapper;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,9 +25,9 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public UsuarioDTO criarUsuario (@RequestBody CriarUsuarioDTO criarUsuarioDTO) {
+    public ResponseEntity<UsuarioDTO> criarUsuario (@RequestBody @Valid CriarUsuarioDTO criarUsuarioDTO) {
         var usuario = useCase.criar(criarUsuarioDTO.nome(), criarUsuarioDTO.email(), criarUsuarioDTO.tipoUsuarioId());
-        return mapper.toDTO(usuario);
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toDTO(usuario));
     }
 
     @GetMapping("/{id}")

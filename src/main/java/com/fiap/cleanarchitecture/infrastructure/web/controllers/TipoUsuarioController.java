@@ -5,6 +5,7 @@ import com.fiap.cleanarchitecture.infrastructure.web.dtos.CriarTipoUsuarioDTO;
 import com.fiap.cleanarchitecture.infrastructure.web.dtos.TipoUsuarioDTO;
 import com.fiap.cleanarchitecture.infrastructure.web.mappers.TipoUsuarioWebMapper;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,7 @@ public class TipoUsuarioController {
     public ResponseEntity<TipoUsuarioDTO> criarTipoUsuario(@RequestBody @Valid CriarTipoUsuarioDTO criarTipoUsuarioDTO) {
         var domainEntity = MAPPER.toDomainEntity(criarTipoUsuarioDTO);
         var tipoCriado = useCase.criar(domainEntity);
-        return ResponseEntity.status(201).body(MAPPER.toDTO(tipoCriado));
+        return ResponseEntity.status(HttpStatus.CREATED).body(MAPPER.toDTO(tipoCriado));
     }
 
     @GetMapping("/{id}")
