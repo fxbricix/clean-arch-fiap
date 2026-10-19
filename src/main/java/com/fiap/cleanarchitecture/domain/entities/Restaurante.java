@@ -46,4 +46,11 @@ public class Restaurante {
         this.horarioFuncionamento = horarioFuncionamento;
         this.idDono = idDono;
     }
+
+    public void alterarDados(String nome, String endereco, String tipoCozinha, HorarioFuncionamento horarioFuncionamento) {
+        this.nome = validarNome(nome);
+        this.endereco = validarEndereco(endereco);
+        this.tipoCozinha = validarTipoCozinha(tipoCozinha);
+        this.horarioFuncionamento = horarioFuncionamento;
+    }
 }
