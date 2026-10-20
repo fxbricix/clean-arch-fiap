@@ -2,10 +2,12 @@ package com.fiap.cleanarchitecture.infrastructure.web.exceptions;
 
 import com.fiap.cleanarchitecture.application.exceptions.ConflitoException;
 import com.fiap.cleanarchitecture.application.exceptions.RecursoNaoEncontradoException;
+import com.fiap.cleanarchitecture.application.exceptions.RegraDeNegocioException;
 import com.fiap.cleanarchitecture.domain.exceptions.DominioException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -29,6 +31,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DominioException.class)
     public ResponseEntity<ProblemDetail> dominio(DominioException e) {
         return resposta(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(RegraDeNegocioException.class)
+    public ResponseEntity<ProblemDetail> regraDeNegocio(RegraDeNegocioException e) {
+        return resposta(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ProblemDetail> corpoIlegivel(HttpMessageNotReadableException e) {
+        return resposta(HttpStatus.BAD_REQUEST, "Corpo da requisição inválido ou mal formatado");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

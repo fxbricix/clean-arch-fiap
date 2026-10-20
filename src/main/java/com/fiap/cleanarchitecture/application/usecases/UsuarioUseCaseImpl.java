@@ -2,6 +2,8 @@ package com.fiap.cleanarchitecture.application.usecases;
 
 import com.fiap.cleanarchitecture.application.exceptions.ConflitoException;
 import com.fiap.cleanarchitecture.application.exceptions.RecursoNaoEncontradoException;
+import com.fiap.cleanarchitecture.application.exceptions.RegraDeNegocioException;
+import com.fiap.cleanarchitecture.application.gateways.IRestauranteGateway;
 import com.fiap.cleanarchitecture.application.gateways.ITipoUsuarioGateway;
 import com.fiap.cleanarchitecture.application.gateways.IUsuarioGateway;
 import com.fiap.cleanarchitecture.application.interfaces.IUsuarioUseCase;
@@ -16,10 +18,12 @@ public class UsuarioUseCaseImpl implements IUsuarioUseCase {
 
     private final IUsuarioGateway usuarioGateway;
     private final ITipoUsuarioGateway tipoUsuarioGateway;
+    private final IRestauranteGateway restauranteGateway;
 
-    public UsuarioUseCaseImpl(IUsuarioGateway usuarioGateway, ITipoUsuarioGateway tipoUsuarioGateway) {
+    public UsuarioUseCaseImpl(IUsuarioGateway usuarioGateway, ITipoUsuarioGateway tipoUsuarioGateway, IRestauranteGateway restauranteGateway) {
         this.usuarioGateway = usuarioGateway;
         this.tipoUsuarioGateway = tipoUsuarioGateway;
+        this.restauranteGateway = restauranteGateway;
     }
 
     @Override
@@ -46,7 +50,16 @@ public class UsuarioUseCaseImpl implements IUsuarioUseCase {
     @Override
     public Usuario associarTipo(Long usuarioId, Long tipoUsuarioId) {
         Usuario usuario = buscarPorId(usuarioId);
-        usuario.alterarTipo(buscarTipo(tipoUsuarioId));
+        TipoUsuario novoTipo = buscarTipo(tipoUsuarioId);
+
+        if (usuario.ehDonoDeRestaurante()
+                && !novoTipo.ehDonoDeRestaurante()
+                && restauranteGateway.existePorDonoId(usuario.getId())) {
+            throw new RegraDeNegocioException(
+                    "Usuário é dono de restaurantes. Transfira ou exclua os restaurantes antes de alterar o tipo");
+        }
+
+        usuario.alterarTipo(novoTipo);
         return usuarioGateway.salvar(usuario);
     }
 

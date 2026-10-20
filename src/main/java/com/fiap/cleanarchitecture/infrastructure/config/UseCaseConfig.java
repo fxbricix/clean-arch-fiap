@@ -22,8 +22,9 @@ public class UseCaseConfig {
 
     @Bean
     public IUsuarioUseCase usuarioUseCase(IUsuarioGateway usuarioGateway,
-                                          ITipoUsuarioGateway tipoUsuarioGateway) {
-        return new UsuarioUseCaseImpl(usuarioGateway, tipoUsuarioGateway);
+                                          ITipoUsuarioGateway tipoUsuarioGateway,
+                                          IRestauranteGateway restauranteGateway) {
+        return new UsuarioUseCaseImpl(usuarioGateway, tipoUsuarioGateway, restauranteGateway);
     }
 
     @Bean
