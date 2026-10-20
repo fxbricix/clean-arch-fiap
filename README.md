@@ -31,7 +31,7 @@ Esta fase entrega o gerenciamento de **tipos de usuário**, o cadastro de **rest
 | Infraestrutura (Docker Compose, Flyway, Swagger) | ✅ pronto |
 | Cadastro de **tipo de usuário** (CRUD) | ✅ pronto |
 | **Usuário** e associação ao tipo de usuário | ✅ pronto |
-| Cadastro de **restaurante** (CRUD) | 🚧 planejado |
+| Cadastro de **restaurante** (CRUD) | ✅ pronto |
 | Cadastro de **item do cardápio** (CRUD) | 🚧 planejado |
 | Collection do Postman | 🚧 planejado |
 
@@ -165,7 +165,8 @@ Os erros seguem o formato **RFC 7807** (`application/problem+json`):
 | Status | Quando acontece |
 |---|---|
 | `400 Bad Request` | corpo inválido (campo obrigatório ausente, tamanho excedido) ou regra de domínio violada |
-| `404 Not Found` | o recurso pedido não existe |
+| `404 Not Found` | o recurso pedido não existe (inclusive o dono informado ao cadastrar um restaurante) |
+| `422 Unprocessable Entity` | regra de negócio violada: dono que não é do tipo `DONO_RESTAURANTE`, ou troca de tipo de um dono que ainda possui restaurantes |
 | `409 Conflict` | nome já cadastrado, tentativa de excluir um tipo em uso por usuários, ou alteração/exclusão de tipo sistêmico |
 
 ```json
@@ -184,11 +185,38 @@ Os erros seguem o formato **RFC 7807** (`application/problem+json`):
 |---|---|---|
 | Usuário | `POST /v1/usuarios`, `GET /v1/usuarios/{id}`, `GET /v1/usuarios/listar`, `PUT /v1/usuarios/{usuarioId}/tipo/{tipoUsuarioId}` | nome, e-mail, tipo de usuário |
 
+### Restaurantes — `/v1/restaurantes`
+
+| Método | Rota | Descrição | Sucesso | Erros possíveis |
+|---|---|---|---|---|
+| `POST` | `/v1/restaurantes` | Cria um restaurante | `201` | `400`, `404`, `422` |
+| `GET` | `/v1/restaurantes/{id}` | Busca um restaurante pelo id | `200` | `404` |
+| `GET` | `/v1/restaurantes/listar` | Lista todos os restaurantes | `200` | — |
+| `PUT` | `/v1/restaurantes/{id}` | Atualiza todos os dados, inclusive o dono | `200` | `400`, `404`, `422` |
+| `DELETE` | `/v1/restaurantes/{id}` | Exclui um restaurante | `204` | `404`, `409` |
+
+**Campos:** `nome` (até 120 caracteres), `endereco` (até 255), `tipoCozinha` (até 60), `horarioFuncionamento` (`abertura` e `fechamento` no formato `HH:mm`) e `donoId`. Todos são obrigatórios.
+
+**Regras**
+
+- **Dono inexistente:** `donoId` que não corresponde a nenhum usuário retorna `404`.
+- **Dono de outro tipo:** o usuário informado precisa ser do tipo `DONO_RESTAURANTE`; caso contrário, `422`. A regra vale também ao trocar o dono em um `PUT`.
+- **Horário no mesmo dia:** a abertura deve ser anterior ao fechamento (`400` caso contrário). Não há horário que atravesse a meia-noite.
+- **Bloqueio de troca de tipo:** um dono que ainda possui restaurantes não pode ser associado a outro tipo (`PUT /v1/usuarios/{id}/tipo/{tipoId}` retorna `422`). É preciso transferir ou excluir os restaurantes antes.
+
+**Exemplo: criar**
+
+```bash
+curl -X POST http://localhost:8080/v1/restaurantes \
+  -H "Content-Type: application/json" \
+  -d '{"nome": "Cantina", "endereco": "Rua A, 10", "tipoCozinha": "Italiana",
+       "horarioFuncionamento": {"abertura": "10:00", "fechamento": "22:30"}, "donoId": 1}'
+```
+
 ### Endpoints planejados
 
 | Recurso | Rotas previstas | Campos (conforme o enunciado) |
 |---|---|---|
-| Restaurante | CRUD em `/v1/restaurantes` | nome, endereço, tipo de cozinha, horário de funcionamento, dono (usuário do tipo `DONO_RESTAURANTE`) |
 | Item do cardápio | CRUD em `/v1/restaurantes/{id}/itens` | nome, descrição, preço, disponível apenas no local, caminho da foto |
 
 ---

@@ -72,7 +72,8 @@ class RestauranteIntegrationTest extends IntegrationTestBase {
         long clienteId = criarUsuario("CLIENTE");
 
         mockMvc.perform(post("/v1/restaurantes").contentType(APPLICATION_JSON).content(json("Cantina", clienteId)))
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.detail").value("Usuário não é dono de restaurante"));
     }
 
     @Test
@@ -86,7 +87,8 @@ class RestauranteIntegrationTest extends IntegrationTestBase {
         long donoId = criarUsuario("DONO_RESTAURANTE");
 
         mockMvc.perform(post("/v1/restaurantes").contentType(APPLICATION_JSON).content(json("", donoId)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.erros.nome").exists());
     }
 
     @Test
@@ -95,7 +97,19 @@ class RestauranteIntegrationTest extends IntegrationTestBase {
         String corpo = json("Cantina", donoId).replace("10:00", "dez horas");
 
         mockMvc.perform(post("/v1/restaurantes").contentType(APPLICATION_JSON).content(corpo))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.detail").value("Corpo da requisição inválido ou mal formatado"));
+    }
+
+    @Test
+    void rejeitaHorarioComAberturaDepoisDoFechamento() throws Exception {
+        long donoId = criarUsuario("DONO_RESTAURANTE");
+        String corpo = json("Cantina", donoId).replace("\"abertura\":\"10:00\",\"fechamento\":\"22:30\"",
+                "\"abertura\":\"23:00\",\"fechamento\":\"08:00\"");
+
+        mockMvc.perform(post("/v1/restaurantes").contentType(APPLICATION_JSON).content(corpo))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.detail").value("Horário de abertura deve ser antes do horário de fechamento."));
     }
 
     @Test
@@ -137,6 +151,35 @@ class RestauranteIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
+    void trocaODonoDoRestauranteNaAtualizacao() throws Exception {
+        long primeiroDono = criarUsuario("DONO_RESTAURANTE");
+        long segundoDono = criarUsuario("DONO_RESTAURANTE");
+        long id = criarRestaurante("Cantina", primeiroDono);
+
+        mockMvc.perform(put("/v1/restaurantes/{id}", id).contentType(APPLICATION_JSON)
+                        .content(json("Cantina", segundoDono)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.donoId").value(segundoDono));
+        mockMvc.perform(get("/v1/restaurantes/{id}", id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.donoId").value(segundoDono));
+    }
+
+    @Test
+    void rejeitaAtualizacaoParaDonoQueEhCliente() throws Exception {
+        long donoId = criarUsuario("DONO_RESTAURANTE");
+        long clienteId = criarUsuario("CLIENTE");
+        long id = criarRestaurante("Cantina", donoId);
+
+        mockMvc.perform(put("/v1/restaurantes/{id}", id).contentType(APPLICATION_JSON)
+                        .content(json("Cantina", clienteId)))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.detail").value("Usuário não é dono de restaurante"));
+        mockMvc.perform(get("/v1/restaurantes/{id}", id))
+                .andExpect(jsonPath("$.donoId").value(donoId));
+    }
+
+    @Test
     void rejeitaAtualizacaoDeRestauranteInexistente() throws Exception {
         long donoId = criarUsuario("DONO_RESTAURANTE");
 
@@ -164,7 +207,9 @@ class RestauranteIntegrationTest extends IntegrationTestBase {
         criarRestaurante("Cantina", donoId);
 
         mockMvc.perform(put("/v1/usuarios/{u}/tipo/{t}", donoId, idDoTipo("CLIENTE")))
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.detail").value(
+                        "Usuário é dono de restaurantes. Transfira ou exclua os restaurantes antes de alterar o tipo"));
         mockMvc.perform(get("/v1/usuarios/{id}", donoId))
                 .andExpect(jsonPath("$.tipoUsuario.nome").value("DONO_RESTAURANTE"));
     }
