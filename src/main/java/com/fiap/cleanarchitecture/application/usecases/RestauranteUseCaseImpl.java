@@ -9,7 +9,6 @@ import com.fiap.cleanarchitecture.domain.entities.Restaurante;
 import com.fiap.cleanarchitecture.domain.entities.Usuario;
 
 import java.util.List;
-import java.util.Optional;
 
 public class RestauranteUseCaseImpl implements IRestauranteUseCase {
 
@@ -67,12 +66,10 @@ public class RestauranteUseCaseImpl implements IRestauranteUseCase {
     }
 
     private void validarDono(Long id) {
-        Optional<Usuario> usuario = usuarioGateway.buscarPorId(id);
-        if (!usuario.isPresent()) {
-            throw new RecursoNaoEncontradoException("Usuário não encontrado");
-        }
+        Usuario usuario = usuarioGateway.buscarPorId(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado"));
 
-        if (!usuario.get().ehDonoDeRestaurante()) {
+        if (!usuario.ehDonoDeRestaurante()) {
             throw new RegraDeNegocioException("Usuário não é dono de restaurante");
         }
     }

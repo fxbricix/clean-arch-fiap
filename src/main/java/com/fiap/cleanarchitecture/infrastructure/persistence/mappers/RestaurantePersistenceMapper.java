@@ -6,9 +6,6 @@ import com.fiap.cleanarchitecture.infrastructure.persistence.entities.Restaurant
 
 public class RestaurantePersistenceMapper {
 
-    public RestaurantePersistenceMapper() {
-    }
-
     public Restaurante toDomainEntity(RestauranteEntity entity) {
         if (entity == null) {
             return null;

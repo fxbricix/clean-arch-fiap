@@ -7,12 +7,14 @@ import com.fiap.cleanarchitecture.infrastructure.persistence.entities.Restaurant
 import com.fiap.cleanarchitecture.infrastructure.persistence.mappers.RestaurantePersistenceMapper;
 import com.fiap.cleanarchitecture.infrastructure.persistence.repository.RestauranteJpaRepository;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Repository
 public class RestauranteGatewayImpl implements IRestauranteGateway {
 
     private final RestauranteJpaRepository repository;
@@ -52,7 +54,7 @@ public class RestauranteGatewayImpl implements IRestauranteGateway {
             repository.flush();
         } catch (DataIntegrityViolationException e) {
             throw new ConflitoException(
-                    "Nao foi possivel excluir restaurante");
+                    "Não foi possível excluir restaurante");
         }
     }
 

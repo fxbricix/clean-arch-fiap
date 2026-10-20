@@ -3,7 +3,6 @@ package com.fiap.cleanarchitecture.application.interfaces;
 import com.fiap.cleanarchitecture.domain.entities.Restaurante;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface IRestauranteUseCase {
     Restaurante criar(Restaurante restaurante);
