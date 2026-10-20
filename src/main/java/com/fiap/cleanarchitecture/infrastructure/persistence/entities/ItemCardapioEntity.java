@@ -21,7 +21,7 @@ public class ItemCardapioEntity {
     @Column(nullable = false, length = 120)
     private String nome;
 
-    @Column(length = 500)
+    @Column(nullable = false, length = 500)
     private String descricao;
 
     @Column(nullable = false, precision = 10, scale = 2)
