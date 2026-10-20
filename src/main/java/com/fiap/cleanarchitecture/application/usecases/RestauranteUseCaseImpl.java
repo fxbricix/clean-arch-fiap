@@ -32,9 +32,9 @@ public class RestauranteUseCaseImpl implements IRestauranteUseCase {
     }
 
     @Override
-    public Optional<Restaurante> buscarPorId(Long id) {
-        return Optional.of(restauranteGateway.buscarPorId(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Restaurante não encontrado")));
+    public Restaurante buscarPorId(Long id) {
+        return restauranteGateway.buscarPorId(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Restaurante não encontrado"));
     }
 
     @Override
@@ -44,8 +44,7 @@ public class RestauranteUseCaseImpl implements IRestauranteUseCase {
 
     @Override
     public Restaurante atualizar(Long id, Restaurante restaurante) {
-        Restaurante existente = buscarPorId(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Restaurante não encontrado"));
+        Restaurante existente = buscarPorId(id);
 
         validarDono(restaurante.getIdDono());
 
@@ -53,7 +52,8 @@ public class RestauranteUseCaseImpl implements IRestauranteUseCase {
                 restaurante.getNome(),
                 restaurante.getEndereco(),
                 restaurante.getTipoCozinha(),
-                restaurante.getHorarioFuncionamento()
+                restaurante.getHorarioFuncionamento(),
+                restaurante.getIdDono()
         );
 
         return restauranteGateway.salvar(existente);
@@ -61,8 +61,7 @@ public class RestauranteUseCaseImpl implements IRestauranteUseCase {
 
     @Override
     public void excluir(Long id) {
-        buscarPorId(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Restaurante não encontrado"));
+        buscarPorId(id);
 
         restauranteGateway.excluir(id);
     }

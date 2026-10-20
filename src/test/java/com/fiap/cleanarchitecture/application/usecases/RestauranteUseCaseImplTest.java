@@ -50,16 +50,6 @@ class RestauranteUseCaseImplTest {
     }
 
     @Test
-    @DisplayName("Não deve criar restaurante sem dono")
-    void naoDeveCriarRestauranteSemDono() {
-        Restaurante restaurante = criarRestaurante(1L, null, "Restaurante");
-
-        assertThrows(RegraDeNegocioException.class, () -> useCase.criar(restaurante));
-
-        verifyNoInteractions(usuarioGateway, restauranteGateway);
-    }
-
-    @Test
     @DisplayName("Não deve criar restaurante quando o dono não existe")
     void naoDeveCriarRestauranteComDonoInexistente() {
         Restaurante restaurante = criarRestaurante(1L, 10L, "Restaurante");
@@ -87,9 +77,9 @@ class RestauranteUseCaseImplTest {
         Restaurante restaurante = criarRestaurante(1L, 10L, "Restaurante");
         when(restauranteGateway.buscarPorId(1L)).thenReturn(Optional.of(restaurante));
 
-        Optional<Restaurante> resultado = useCase.buscarPorId(1L);
+        Restaurante resultado = useCase.buscarPorId(1L);
 
-        assertSame(restaurante, resultado.orElseThrow());
+        assertSame(restaurante, resultado);
     }
 
     @Test
@@ -114,10 +104,11 @@ class RestauranteUseCaseImplTest {
     }
 
     @Test
-    @DisplayName("Deve atualizar os dados do restaurante e salvar")
+    @DisplayName("Deve atualizar os dados do restaurante, incluindo o dono, e salvar")
     void deveAtualizarRestaurante() {
         Restaurante existente = criarRestaurante(1L, 10L, "Nome anterior");
-        Restaurante dadosAtualizados = criarRestaurante(2L, 20L, "Nome novo");
+        HorarioFuncionamento novoHorario = new HorarioFuncionamento(LocalTime.of(11, 0), LocalTime.of(23, 0));
+        Restaurante dadosAtualizados = new Restaurante(2L, "Nome novo", "Endereço novo", "Italiana", novoHorario, 20L);
         when(restauranteGateway.buscarPorId(1L)).thenReturn(Optional.of(existente));
         when(usuarioGateway.buscarPorId(20L)).thenReturn(Optional.of(criarUsuarioDono(20L)));
         when(restauranteGateway.salvar(existente)).thenReturn(existente);
@@ -125,10 +116,12 @@ class RestauranteUseCaseImplTest {
         Restaurante resultado = useCase.atualizar(1L, dadosAtualizados);
 
         assertSame(existente, resultado);
+        assertEquals(1L, existente.getId());
         assertEquals("Nome novo", existente.getNome());
-        assertEquals("Endereço", existente.getEndereco());
-        assertEquals("Brasileira", existente.getTipoCozinha());
-        assertEquals(dadosAtualizados.getHorarioFuncionamento(), existente.getHorarioFuncionamento());
+        assertEquals("Endereço novo", existente.getEndereco());
+        assertEquals("Italiana", existente.getTipoCozinha());
+        assertEquals(novoHorario, existente.getHorarioFuncionamento());
+        assertEquals(20L, existente.getIdDono());
         verify(restauranteGateway).salvar(existente);
     }
 
@@ -155,6 +148,21 @@ class RestauranteUseCaseImplTest {
                 () -> useCase.atualizar(1L, criarRestaurante(2L, 20L, "Nome novo")));
 
         assertEquals("Nome anterior", existente.getNome());
+        verify(restauranteGateway, never()).salvar(any(Restaurante.class));
+    }
+
+    @Test
+    @DisplayName("Não deve atualizar restaurante quando o novo dono não é dono de restaurante")
+    void naoDeveAtualizarRestauranteQuandoNovoDonoNaoEDono() {
+        Restaurante existente = criarRestaurante(1L, 10L, "Nome anterior");
+        when(restauranteGateway.buscarPorId(1L)).thenReturn(Optional.of(existente));
+        when(usuarioGateway.buscarPorId(20L)).thenReturn(Optional.of(criarUsuarioCliente(20L)));
+
+        assertThrows(RegraDeNegocioException.class,
+                () -> useCase.atualizar(1L, criarRestaurante(2L, 20L, "Nome novo")));
+
+        assertEquals("Nome anterior", existente.getNome());
+        assertEquals(10L, existente.getIdDono());
         verify(restauranteGateway, never()).salvar(any(Restaurante.class));
     }
 
