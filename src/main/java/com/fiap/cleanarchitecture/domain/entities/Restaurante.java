@@ -30,7 +30,6 @@ public class Restaurante {
 
     public void alterarDados(String nome, String endereco, String tipoCozinha,
                              HorarioFuncionamento horarioFuncionamento, Long idDono) {
-        // valida tudo antes de alterar qualquer campo
         String novoNome = texto(nome, "O nome", TAMANHO_MAXIMO_NOME);
         String novoEndereco = texto(endereco, "O endereço", TAMANHO_MAXIMO_ENDERECO);
         String novoTipoCozinha = texto(tipoCozinha, "O tipo de cozinha", TAMANHO_MAXIMO_TIPO_COZINHA);
