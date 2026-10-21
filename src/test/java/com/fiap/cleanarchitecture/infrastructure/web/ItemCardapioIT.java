@@ -295,6 +295,27 @@ class ItemCardapioIT extends IntegrationTestBase {
     }
 
     @Test
+    void rejeitaExclusaoDeRestauranteComItensAteOItemSerExcluido() throws Exception {
+        long donoId = criarUsuario("DONO_RESTAURANTE");
+        long restauranteId = criarRestaurante(donoId);
+        long itemId = criarItem(restauranteId, donoId, "Lasanha");
+
+        mockMvc.perform(delete("/v1/restaurantes/{id}", restauranteId))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail").value("Não foi possível excluir restaurante"));
+        mockMvc.perform(get("/v1/restaurantes/{id}", restauranteId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(restauranteId));
+
+        mockMvc.perform(delete("/v1/restaurantes/{r}/itens/{id}", restauranteId, itemId).header(CABECALHO, donoId))
+                .andExpect(status().isNoContent());
+        mockMvc.perform(delete("/v1/restaurantes/{id}", restauranteId))
+                .andExpect(status().isNoContent());
+        mockMvc.perform(get("/v1/restaurantes/{id}", restauranteId))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void rejeitaExclusaoDeItemInexistente() throws Exception {
         long donoId = criarUsuario("DONO_RESTAURANTE");
         long restauranteId = criarRestaurante(donoId);

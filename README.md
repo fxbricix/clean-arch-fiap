@@ -33,7 +33,7 @@ Esta fase entrega o gerenciamento de **tipos de usuário** e **usuários**, o ca
 | **Usuário** e associação ao tipo de usuário | ✅ pronto |
 | Cadastro de **restaurante** (CRUD) | ✅ pronto |
 | Cadastro de **item do cardápio** (CRUD) | ✅ pronto |
-| Collection do Postman | 🚧 planejado |
+| Collection do Postman | ✅ `postman/cardapio.postman_collection.json` |
 
 ---
 
@@ -421,6 +421,6 @@ As migrations ficam em `database/migrations` e são executadas pelo serviço `fl
 
 ## Collection do Postman
 
-🚧 _A collection será adicionada em `postman/` com o fluxo completo: criar tipo → criar usuário → associar tipo → criar restaurante → cadastrar item do cardápio._
+A collection está em `postman/cardapio.postman_collection.json`. Importe no Postman e rode com o Collection Runner, na ordem: tipos → usuários → restaurantes → itens → exclusões. Os ids (`donoId`, `restauranteId`, `itemId`…) são capturados por scripts nas variáveis da collection, e `baseUrl` aponta para `http://localhost:8080`. As escritas de item enviam `X-Usuario-Id: {{donoId}}`. A pasta final cobre a regra da FK: excluir restaurante com itens devolve 409, e sem itens devolve 204.
 
 Enquanto isso, todos os endpoints podem ser testados pelo Swagger UI: http://localhost:8080/swagger-ui.html

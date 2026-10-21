@@ -16,14 +16,17 @@ class ArquiteturaTest {
             .that().resideInAPackage("..domain..")
             .should().dependOnClassesThat().resideInAnyPackage(
                     "..application..", "..infrastructure..",
-                    "org.springframework..", "jakarta..", "com.fasterxml..");
+                    "org.springframework..", "jakarta..", "com.fasterxml..",
+                    "org.hibernate..", "org.apache..");
 
     @ArchTest
     static final ArchRule aplicacaoNaoDependeDeInfraNemFrameworks = noClasses()
             .that().resideInAPackage("..application..")
             .should().dependOnClassesThat().resideInAnyPackage(
                     "..infrastructure..",
-                    "org.springframework..", "jakarta..", "com.fasterxml..");
+                    "org.springframework..", "jakarta..", "com.fasterxml..",
+                    "org.hibernate..", "org.apache..");
+
 
     @ArchTest
     static final ArchRule persistenciaNaoDependeDaWeb = noClasses()
