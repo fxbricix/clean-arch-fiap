@@ -1,560 +1,1573 @@
 {
   "info": {
-    "_postman_id": "09e42d19-bcf8-4f68-a79c-fc0e0812a263",
     "name": "fiap-post-tech-2",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "57270743",
-    "_collection_link": "https://go.postman.co/collection/57270743-09e42d19-bcf8-4f68-a79c-fc0e0812a263?source=collection_link"
+    "description": "Tech Challenge Fase 2. Rode com o Collection Runner, na ordem das pastas. Os ids sao guardados em variaveis da collection.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "if (!pm.collectionVariables.get(\"sufixo\")) { pm.collectionVariables.set(\"sufixo\", Date.now().toString()); }"
+        ]
+      }
+    }
+  ],
   "item": [
     {
-      "name": "Tipo Usuario",
+      "name": "0 - Preparacao",
       "item": [
         {
-          "name": "Criar Tipo Usuario",
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nome\": \"TESTE\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
+          "name": "Listar tipos e guardar ids",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set(\"tipoDonoId\", pm.response.json().find(t => t.nome === \"DONO_RESTAURANTE\").id);",
+                  "pm.collectionVariables.set(\"tipoClienteId\", pm.response.json().find(t => t.nome === \"CLIENTE\").id);"
+                ]
               }
-            },
-            "url": {
-              "raw": "http://localhost:8080/v1/tipo-usuarios",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8080",
-              "path": [
-                "v1",
-                "tipo-usuarios"
-              ]
             }
-          },
-          "response": []
-        },
-        {
-          "name": "Apagar Tipo",
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "DELETE",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nome\": \"CLW\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "http://localhost:8080/v1/tipo-usuarios/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8080",
-              "path": [
-                "v1",
-                "tipo-usuarios",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Obter Tipo Usuario",
+          ],
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/v1/tipo-usuarios/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/v1/tipo-usuarios/listar",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
-              "path": [
-                "v1",
-                "tipo-usuarios",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Obter todos os tipos",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8080/v1/tipo-usuarios/listar",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8080",
               "path": [
                 "v1",
                 "tipo-usuarios",
                 "listar"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Atualizar Tipo",
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "PATCH",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nome\": \"DONO_RESTAURANTE\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
+          "name": "Criar usuario dono",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set(\"donoId\", pm.response.json().id);"
+                ]
               }
-            },
-            "url": {
-              "raw": "http://localhost:8080/v1/tipo-usuarios/2",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8080",
-              "path": [
-                "v1",
-                "tipo-usuarios",
-                "2"
-              ]
             }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Usuario",
-      "item": [
-        {
-          "name": "Busca Usuario por ID",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8080/v1/usuarios/2",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8080",
-              "path": [
-                "v1",
-                "usuarios",
-                "2"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Busca Usuario por ID Copy",
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8080/v1/usuarios/2/tipo/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8080",
-              "path": [
-                "v1",
-                "usuarios",
-                "2",
-                "tipo",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Listar Usuarios",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8080/v1/usuarios/listar",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8080",
-              "path": [
-                "v1",
-                "usuarios",
-                "listar"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Criar Usuario",
+          ],
           "request": {
             "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"nome\": \"Joao\",\n    \"email\": \"joao@fiap.com.br\",\n    \"tipoUsuarioId\": 1\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
               }
-            },
+            ],
             "url": {
-              "raw": "http://localhost:8080/v1/usuarios",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/v1/usuarios",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "v1",
                 "usuarios"
               ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Maria Dona\",\n  \"email\": \"maria.dona-{{sufixo}}@teste.com\",\n  \"tipoUsuarioId\": {{tipoDonoId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Associar Tipo a Usuario",
+          "name": "Criar outro usuario dono",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set(\"outroDonoId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ],
           "request": {
-            "method": "PUT",
-            "header": [],
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
-              "raw": "http://localhost:8080/v1/usuarios/2/tipo/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/v1/usuarios",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "v1",
-                "usuarios",
-                "2",
-                "tipo",
-                "1"
+                "usuarios"
               ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Carlos Dono\",\n  \"email\": \"carlos.dono-{{sufixo}}@teste.com\",\n  \"tipoUsuarioId\": {{tipoDonoId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          },
-          "response": []
+          }
+        },
+        {
+          "name": "Criar usuario cliente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set(\"clienteId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "usuarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Joao Cliente\",\n  \"email\": \"joao.cliente-{{sufixo}}@teste.com\",\n  \"tipoUsuarioId\": {{tipoClienteId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
         }
       ]
     },
     {
-      "name": "Restaurante",
+      "name": "1 - Tipos de usuario",
       "item": [
         {
-          "name": "Criar Restaurante",
+          "name": "Criar tipo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set(\"tipoNovoId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/tipo-usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "tipo-usuarios"
+              ]
+            },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nome\": \"Cantina da Maria\",\n  \"endereco\": \"Rua das Flores, 100 - São Paulo/SP\",\n  \"tipoCozinha\": \"Italiana\",\n  \"horarioFuncionamento\": { \"abertura\": \"10:00\", \"fechamento\": \"22:00\" },\n  \"donoId\": 1\n}",
+              "raw": "{\n  \"nome\": \"GERENTE-{{sufixo}}\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
+            }
+          }
+        },
+        {
+          "name": "Obter tipo por id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
             "url": {
-              "raw": "http://localhost:8080/v1/restaurantes",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/v1/tipo-usuarios/{{tipoNovoId}}",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
+              "path": [
+                "v1",
+                "tipo-usuarios",
+                "{{tipoNovoId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar tipos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/tipo-usuarios/listar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "tipo-usuarios",
+                "listar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Atualizar tipo (PATCH)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Nome atualizado\", function () { pm.expect(pm.response.json().nome).to.include(\"SUPERVISOR\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/tipo-usuarios/{{tipoNovoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "tipo-usuarios",
+                "{{tipoNovoId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"SUPERVISOR-{{sufixo}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2 - Usuarios",
+      "item": [
+        {
+          "name": "Buscar usuario por id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/usuarios/{{donoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "usuarios",
+                "{{donoId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar usuarios",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/usuarios/listar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "usuarios",
+                "listar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar usuario para troca de tipo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set(\"trocaId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "usuarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Ana Troca\",\n  \"email\": \"ana.troca-{{sufixo}}@teste.com\",\n  \"tipoUsuarioId\": {{tipoClienteId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Associar tipo dono ao usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Tipo associado\", function () { pm.expect(pm.response.json().tipoUsuario.nome).to.eql(\"DONO_RESTAURANTE\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/usuarios/{{trocaId}}/tipo/{{tipoDonoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "usuarios",
+                "{{trocaId}}",
+                "tipo",
+                "{{tipoDonoId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 - Restaurantes",
+      "item": [
+        {
+          "name": "Criar restaurante",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set(\"restauranteId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes",
+              "host": [
+                "{{baseUrl}}"
+              ],
               "path": [
                 "v1",
                 "restaurantes"
               ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Cardapio - Criar item",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "X-Usuario-Id",
-                "value": "1"
-              }
-            ],
+            },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nome\": \"Buffet Livre\",\n  \"descricao\": \"Buffet\",\n  \"preco\": 33.90,\n  \"apenasNoLocal\": true,\n  \"caminhoFoto\": \"xpto/xpto/buffet-livre.png\"\n\n}",
+              "raw": "{\n  \"nome\": \"Cantina da Maria\",\n  \"endereco\": \"Rua das Flores, 100 - Sao Paulo/SP\",\n  \"tipoCozinha\": \"Italiana\",\n  \"horarioFuncionamento\": {\n    \"abertura\": \"10:00\",\n    \"fechamento\": \"22:00\"\n  },\n  \"donoId\": {{donoId}}\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "http://localhost:8080/v1/restaurantes/1/itens",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8080",
-              "path": [
-                "v1",
-                "restaurantes",
-                "1",
-                "itens"
-              ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Cardapio - Buscar Item do Restaurante",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "X-Usuario-Id",
-                "value": "1"
+          "name": "Buscar restaurante por id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
               }
-            ],
-            "url": {
-              "raw": "http://localhost:8080/v1/restaurantes/1/itens/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8080",
-              "path": [
-                "v1",
-                "restaurantes",
-                "1",
-                "itens",
-                "1"
-              ]
             }
-          },
-          "response": []
-        },
-        {
-          "name": "Cardapio - Listar Itens do Restaurant",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "X-Usuario-Id",
-                "value": "1"
-              }
-            ],
-            "url": {
-              "raw": "http://localhost:8080/v1/restaurantes/1/itens/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8080",
-              "path": [
-                "v1",
-                "restaurantes",
-                "1",
-                "itens",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Cardapio - Atualizar Prato do Restaurante",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "X-Usuario-Id",
-                "value": "1"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nome\": \"Novo Prato do Dia\",\n  \"descricao\": \"Atualizado\",\n  \"preco\": 33.90,\n  \"apenasNoLocal\": true,\n  \"caminhoFoto\": \"xpto/xpto/prato-novo.png\"\n\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "http://localhost:8080/v1/restaurantes/1/itens/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8080",
-              "path": [
-                "v1",
-                "restaurantes",
-                "1",
-                "itens",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Cardapio - Apagar Prato do Restaurante",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "X-Usuario-Id",
-                "value": "1"
-              }
-            ],
-            "url": {
-              "raw": "http://localhost:8080/v1/restaurantes/1/itens/2",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8080",
-              "path": [
-                "v1",
-                "restaurantes",
-                "1",
-                "itens",
-                "2"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Atualizar Restaurante",
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nome\": \"Cantina da Maria (Centro)\",\n  \"endereco\": \"Av. Central, 500 - São Paulo/SP\",\n  \"tipoCozinha\": \"Massas\",\n  \"horarioFuncionamento\": { \"abertura\": \"11:30\", \"fechamento\": \"23:00\" },\n  \"donoId\": 2\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "http://localhost:8080/v1/restaurantes/2",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8080",
-              "path": [
-                "v1",
-                "restaurantes",
-                "2"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Buscar por ID",
+          ],
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/v1/restaurantes/2",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/v1/restaurantes/{{restauranteId}}",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "v1",
                 "restaurantes",
-                "2"
+                "{{restauranteId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Listar",
+          "name": "Listar restaurantes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/v1/restaurantes/listar",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/v1/restaurantes/listar",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "v1",
                 "restaurantes",
                 "listar"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Apagar Restaurante",
+          "name": "Atualizar restaurante",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes/{{restauranteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes",
+                "{{restauranteId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Cantina da Maria (Centro)\",\n  \"endereco\": \"Rua das Flores, 100 - Sao Paulo/SP\",\n  \"tipoCozinha\": \"Italiana\",\n  \"horarioFuncionamento\": {\n    \"abertura\": \"11:30\",\n    \"fechamento\": \"23:00\"\n  },\n  \"donoId\": {{donoId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Trocar o dono do restaurante",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Novo dono\", function () { pm.expect(pm.response.json().donoId).to.eql(Number(pm.collectionVariables.get(\"outroDonoId\"))); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes/{{restauranteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes",
+                "{{restauranteId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Cantina da Maria (Centro)\",\n  \"endereco\": \"Rua das Flores, 100 - Sao Paulo/SP\",\n  \"tipoCozinha\": \"Italiana\",\n  \"horarioFuncionamento\": {\n    \"abertura\": \"10:00\",\n    \"fechamento\": \"22:00\"\n  },\n  \"donoId\": {{outroDonoId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Devolver o restaurante ao dono original",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes/{{restauranteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes",
+                "{{restauranteId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Cantina da Maria\",\n  \"endereco\": \"Rua das Flores, 100 - Sao Paulo/SP\",\n  \"tipoCozinha\": \"Italiana\",\n  \"horarioFuncionamento\": {\n    \"abertura\": \"10:00\",\n    \"fechamento\": \"22:00\"\n  },\n  \"donoId\": {{donoId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4 - Itens do cardapio (header X-Usuario-Id)",
+      "item": [
+        {
+          "name": "Criar item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set(\"itemId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Usuario-Id",
+                "value": "{{donoId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes/{{restauranteId}}/itens",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes",
+                "{{restauranteId}}",
+                "itens"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Lasanha\",\n  \"descricao\": \"Molho branco e queijo\",\n  \"preco\": 39.9,\n  \"apenasNoLocal\": true,\n  \"caminhoFoto\": \"/fotos/lasanha.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Criar segundo item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set(\"itemId2\", pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Usuario-Id",
+                "value": "{{donoId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes/{{restauranteId}}/itens",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes",
+                "{{restauranteId}}",
+                "itens"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Risoto\",\n  \"descricao\": \"Molho branco e queijo\",\n  \"preco\": 54.5,\n  \"apenasNoLocal\": true,\n  \"caminhoFoto\": \"/fotos/lasanha.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Buscar item por id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes/{{restauranteId}}/itens/{{itemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes",
+                "{{restauranteId}}",
+                "itens",
+                "{{itemId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar itens do restaurante",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes/{{restauranteId}}/itens/listar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes",
+                "{{restauranteId}}",
+                "itens",
+                "listar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Atualizar item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Usuario-Id",
+                "value": "{{donoId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes/{{restauranteId}}/itens/{{itemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes",
+                "{{restauranteId}}",
+                "itens",
+                "{{itemId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Lasanha Bolonhesa\",\n  \"descricao\": \"Molho branco e queijo\",\n  \"preco\": 42.9,\n  \"apenasNoLocal\": true,\n  \"caminhoFoto\": \"/fotos/lasanha.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5 - Erros (cenarios para o video)",
+      "item": [
+        {
+          "name": "422 - Restaurante com dono que e cliente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Cantina da Maria\",\n  \"endereco\": \"Rua das Flores, 100 - Sao Paulo/SP\",\n  \"tipoCozinha\": \"Italiana\",\n  \"horarioFuncionamento\": {\n    \"abertura\": \"10:00\",\n    \"fechamento\": \"22:00\"\n  },\n  \"donoId\": {{clienteId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "404 - Restaurante com dono inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Cantina da Maria\",\n  \"endereco\": \"Rua das Flores, 100 - Sao Paulo/SP\",\n  \"tipoCozinha\": \"Italiana\",\n  \"horarioFuncionamento\": {\n    \"abertura\": \"10:00\",\n    \"fechamento\": \"22:00\"\n  },\n  \"donoId\": 999999\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "400 - Restaurante com nome em branco",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Erro por campo\", function () { pm.expect(pm.response.json().erros).to.have.property(\"nome\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"   \",\n  \"endereco\": \"Rua das Flores, 100 - Sao Paulo/SP\",\n  \"tipoCozinha\": \"Italiana\",\n  \"horarioFuncionamento\": {\n    \"abertura\": \"10:00\",\n    \"fechamento\": \"22:00\"\n  },\n  \"donoId\": {{donoId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "400 - Horario com abertura depois do fechamento",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Cantina da Maria\",\n  \"endereco\": \"Rua das Flores, 100 - Sao Paulo/SP\",\n  \"tipoCozinha\": \"Italiana\",\n  \"horarioFuncionamento\": {\n    \"abertura\": \"23:00\",\n    \"fechamento\": \"08:00\"\n  },\n  \"donoId\": {{donoId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "403 - Item criado por outro dono",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Usuario-Id",
+                "value": "{{outroDonoId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes/{{restauranteId}}/itens",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes",
+                "{{restauranteId}}",
+                "itens"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Pizza\",\n  \"descricao\": \"Molho branco e queijo\",\n  \"preco\": 39.9,\n  \"apenasNoLocal\": true,\n  \"caminhoFoto\": \"/fotos/lasanha.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "403 - Item criado por cliente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Usuario-Id",
+                "value": "{{clienteId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes/{{restauranteId}}/itens",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes",
+                "{{restauranteId}}",
+                "itens"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Pizza\",\n  \"descricao\": \"Molho branco e queijo\",\n  \"preco\": 39.9,\n  \"apenasNoLocal\": true,\n  \"caminhoFoto\": \"/fotos/lasanha.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "400 - Item sem o header X-Usuario-Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes/{{restauranteId}}/itens",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes",
+                "{{restauranteId}}",
+                "itens"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Pizza\",\n  \"descricao\": \"Molho branco e queijo\",\n  \"preco\": 39.9,\n  \"apenasNoLocal\": true,\n  \"caminhoFoto\": \"/fotos/lasanha.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "400 - Item com preco zero",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Usuario-Id",
+                "value": "{{donoId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes/{{restauranteId}}/itens",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes",
+                "{{restauranteId}}",
+                "itens"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Pizza\",\n  \"descricao\": \"Molho branco e queijo\",\n  \"preco\": 0,\n  \"apenasNoLocal\": true,\n  \"caminhoFoto\": \"/fotos/lasanha.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "404 - Item de outro restaurante / inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes/{{restauranteId}}/itens/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes",
+                "{{restauranteId}}",
+                "itens",
+                "999999"
+              ]
+            }
+          }
+        },
+        {
+          "name": "409 - Excluir tipo de sistema (DONO_RESTAURANTE)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/v1/restaurantes/5",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/v1/tipo-usuarios/{{tipoDonoId}}",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
+              "path": [
+                "v1",
+                "tipo-usuarios",
+                "{{tipoDonoId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "422 - Trocar tipo de dono que tem restaurante",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/usuarios/{{donoId}}/tipo/{{tipoClienteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "usuarios",
+                "{{donoId}}",
+                "tipo",
+                "{{tipoClienteId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "409 - Excluir restaurante que tem itens",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes/{{restauranteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
               "path": [
                 "v1",
                 "restaurantes",
-                "5"
+                "{{restauranteId}}"
               ]
             }
-          },
-          "response": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "6 - Exclusoes",
+      "item": [
+        {
+          "name": "Excluir primeiro item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 204\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-Usuario-Id",
+                "value": "{{donoId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes/{{restauranteId}}/itens/{{itemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes",
+                "{{restauranteId}}",
+                "itens",
+                "{{itemId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Excluir segundo item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 204\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-Usuario-Id",
+                "value": "{{donoId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes/{{restauranteId}}/itens/{{itemId2}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes",
+                "{{restauranteId}}",
+                "itens",
+                "{{itemId2}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Excluir restaurante (agora sem itens)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 204\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes/{{restauranteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes",
+                "{{restauranteId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar restaurante excluido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/restaurantes/{{restauranteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "restaurantes",
+                "{{restauranteId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Excluir tipo criado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 204\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/tipo-usuarios/{{tipoNovoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "tipo-usuarios",
+                "{{tipoNovoId}}"
+              ]
+            }
+          }
         }
       ]
     }
