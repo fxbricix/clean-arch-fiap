@@ -1,6 +1,7 @@
 package com.fiap.cleanarchitecture.infrastructure.web.controllers;
 
 import com.fiap.cleanarchitecture.application.interfaces.IItemCardapioUseCase;
+import com.fiap.cleanarchitecture.infrastructure.web.docs.ItemCardapioApi;
 import com.fiap.cleanarchitecture.infrastructure.web.dtos.CriarItemCardapioDTO;
 import com.fiap.cleanarchitecture.infrastructure.web.dtos.ItemCardapioDTO;
 import com.fiap.cleanarchitecture.infrastructure.web.mappers.ItemCardapioWebMapper;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/v1/restaurantes/{restauranteId}/itens")
-public class ItemCardapioController {
+public class ItemCardapioController implements ItemCardapioApi {
 
     private final IItemCardapioUseCase useCase;
     private final ItemCardapioWebMapper mapper;
@@ -23,6 +24,7 @@ public class ItemCardapioController {
         this.mapper = new ItemCardapioWebMapper();
     }
 
+    @Override
     @PostMapping
     public ResponseEntity<ItemCardapioDTO> criarItem(@PathVariable Long restauranteId,
                                                      @RequestHeader("X-Usuario-Id") Long usuarioId,
@@ -32,11 +34,13 @@ public class ItemCardapioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toDTO(item));
     }
 
+    @Override
     @GetMapping("/{id}")
     public ItemCardapioDTO buscarPorId(@PathVariable Long restauranteId, @PathVariable Long id) {
         return mapper.toDTO(useCase.buscarPorId(restauranteId, id));
     }
 
+    @Override
     @GetMapping("/listar")
     public List<ItemCardapioDTO> listarItens(@PathVariable Long restauranteId) {
         return useCase.listar(restauranteId).stream()
@@ -44,6 +48,7 @@ public class ItemCardapioController {
                 .toList();
     }
 
+    @Override
     @PutMapping("/{id}")
     public ItemCardapioDTO atualizarItem(@PathVariable Long restauranteId,
                                          @PathVariable Long id,
@@ -54,6 +59,7 @@ public class ItemCardapioController {
         return mapper.toDTO(item);
     }
 
+    @Override
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluirItem(@PathVariable Long restauranteId,

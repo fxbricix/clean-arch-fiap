@@ -1,6 +1,7 @@
 package com.fiap.cleanarchitecture.infrastructure.web.controllers;
 
 import com.fiap.cleanarchitecture.application.interfaces.ITipoUsuarioUseCase;
+import com.fiap.cleanarchitecture.infrastructure.web.docs.TipoUsuarioApi;
 import com.fiap.cleanarchitecture.infrastructure.web.dtos.CriarTipoUsuarioDTO;
 import com.fiap.cleanarchitecture.infrastructure.web.dtos.TipoUsuarioDTO;
 import com.fiap.cleanarchitecture.infrastructure.web.mappers.TipoUsuarioWebMapper;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/v1/tipo-usuarios")
-public class TipoUsuarioController {
+public class TipoUsuarioController implements TipoUsuarioApi {
 
     private final ITipoUsuarioUseCase useCase;
     private static final TipoUsuarioWebMapper MAPPER = new TipoUsuarioWebMapper();
@@ -22,6 +23,7 @@ public class TipoUsuarioController {
         this.useCase = useCase;
     }
 
+    @Override
     @PostMapping
     public ResponseEntity<TipoUsuarioDTO> criarTipoUsuario(@RequestBody @Valid CriarTipoUsuarioDTO criarTipoUsuarioDTO) {
         var domainEntity = MAPPER.toDomainEntity(criarTipoUsuarioDTO);
@@ -29,17 +31,20 @@ public class TipoUsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(MAPPER.toDTO(tipoCriado));
     }
 
+    @Override
     @GetMapping("/{id}")
     public ResponseEntity<TipoUsuarioDTO> obterTipoUsuario(@PathVariable Long id) {
         var tipoUsuario = useCase.buscarPorId(id);
         return ResponseEntity.ok(MAPPER.toDTO(tipoUsuario));
     }
 
+    @Override
     @GetMapping("/listar")
     public ResponseEntity<List<TipoUsuarioDTO>> obterTodosTiposUsuarios() {
         return ResponseEntity.ok(useCase.listar().stream().map(MAPPER::toDTO).toList());
     }
 
+    @Override
     @PatchMapping("/{id}")
     public ResponseEntity<TipoUsuarioDTO> atualizarTipoUsuario(@PathVariable Long id, @RequestBody @Valid CriarTipoUsuarioDTO criarTipoUsuarioDTO) {
         var domainEntity = MAPPER.toDomainEntity(criarTipoUsuarioDTO);
@@ -47,6 +52,7 @@ public class TipoUsuarioController {
         return ResponseEntity.ok(MAPPER.toDTO(tipoAtualizado));
     }
 
+    @Override
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarTipoUsuario(@PathVariable Long id) {
         useCase.deletar(id);
