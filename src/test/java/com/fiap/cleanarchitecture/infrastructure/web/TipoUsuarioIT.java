@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
-class TipoUsuarioControllerTest extends IntegrationTestBase {
+class TipoUsuarioIT extends IntegrationTestBase {
 
     @Autowired
     private MockMvc mockMvc;

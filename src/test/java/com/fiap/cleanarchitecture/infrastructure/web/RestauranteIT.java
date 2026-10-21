@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-class RestauranteIntegrationTest extends IntegrationTestBase {
+class RestauranteIT extends IntegrationTestBase {
 
     @Autowired
     private MockMvc mockMvc;

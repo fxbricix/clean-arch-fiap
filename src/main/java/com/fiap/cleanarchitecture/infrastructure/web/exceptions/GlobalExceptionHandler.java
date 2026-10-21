@@ -1,5 +1,6 @@
 package com.fiap.cleanarchitecture.infrastructure.web.exceptions;
 
+import com.fiap.cleanarchitecture.application.exceptions.AcessoNegadoException;
 import com.fiap.cleanarchitecture.application.exceptions.ConflitoException;
 import com.fiap.cleanarchitecture.application.exceptions.RecursoNaoEncontradoException;
 import com.fiap.cleanarchitecture.application.exceptions.RegraDeNegocioException;
@@ -9,8 +10,10 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -36,6 +39,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RegraDeNegocioException.class)
     public ResponseEntity<ProblemDetail> regraDeNegocio(RegraDeNegocioException e) {
         return resposta(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+    }
+
+    @ExceptionHandler(AcessoNegadoException.class)
+    public ResponseEntity<ProblemDetail> acessoNegado(AcessoNegadoException e) {
+        return resposta(HttpStatus.FORBIDDEN, e.getMessage());
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    public ResponseEntity<ProblemDetail> cabecalhoAusente(MissingRequestHeaderException e) {
+        return resposta(HttpStatus.BAD_REQUEST, "Cabeçalho obrigatório ausente: " + e.getHeaderName());
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ProblemDetail> parametroInvalido(MethodArgumentTypeMismatchException e) {
+        return resposta(HttpStatus.BAD_REQUEST, "Valor inválido para o parâmetro: " + e.getName());
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

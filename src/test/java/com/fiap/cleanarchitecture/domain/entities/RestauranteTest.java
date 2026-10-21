@@ -44,8 +44,6 @@ class RestauranteTest {
         assertEstadoOriginal(r);
     }
 
-    // ---- nome ----
-
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = {"", "   "})
@@ -70,8 +68,6 @@ class RestauranteTest {
         assertEquals(nome, criar(nome, "Endereço", "Brasileira", HORARIO, 10L).getNome());
     }
 
-    // ---- endereço ----
-
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = {"", "   "})
@@ -87,8 +83,6 @@ class RestauranteTest {
 
         assertThrows(DominioException.class, () -> criar("Restaurante", endereco, "Brasileira", HORARIO, 10L));
     }
-
-    // ---- tipo de cozinha ----
 
     @ParameterizedTest
     @NullSource
@@ -106,8 +100,6 @@ class RestauranteTest {
         assertThrows(DominioException.class, () -> criar("Restaurante", "Endereço", tipo, HORARIO, 10L));
     }
 
-    // ---- trim ----
-
     @Test
     @DisplayName("Deve remover espaços excedentes de nome, endereço e tipo de cozinha")
     void deveAplicarTrim() {
@@ -115,8 +107,6 @@ class RestauranteTest {
 
         assertEstadoOriginal(r);
     }
-
-    // ---- horário e dono ----
 
     @Test
     @DisplayName("Não deve criar restaurante sem horário de funcionamento")
@@ -129,8 +119,6 @@ class RestauranteTest {
     void naoDeveCriarSemDono() {
         assertThrows(DominioException.class, () -> criar("Restaurante", "Endereço", "Brasileira", HORARIO, null));
     }
-
-    // ---- alterarDados ----
 
     @Test
     @DisplayName("alterarDados válido deve atualizar todos os campos, incluindo o dono")

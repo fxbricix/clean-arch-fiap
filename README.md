@@ -32,7 +32,7 @@ Esta fase entrega o gerenciamento de **tipos de usuário** e **usuários**, o ca
 | Cadastro de **tipo de usuário** (CRUD) | ✅ pronto |
 | **Usuário** e associação ao tipo de usuário | ✅ pronto |
 | Cadastro de **restaurante** (CRUD) | ✅ pronto |
-| Cadastro de **item do cardápio** (CRUD) | 🚧 em andamento: domínio, use case e persistência prontos; faltam a camada web (controller e DTOs) e o tratamento do `403` |
+| Cadastro de **item do cardápio** (CRUD) | ✅ pronto |
 | Collection do Postman | 🚧 planejado |
 
 ---
@@ -186,20 +186,34 @@ curl -X POST http://localhost:8080/v1/restaurantes \
        "horarioFuncionamento": {"abertura": "10:00", "fechamento": "22:30"}, "donoId": 1}'
 ```
 
-### Itens do cardápio — em andamento
+### Itens do cardápio — `/v1/restaurantes/{restauranteId}/itens`
 
-A regra de negócio já está implementada e testada; os endpoints REST ainda serão expostos.
+| Método | Rota | Descrição | Sucesso | Erros possíveis |
+|---|---|---|---|---|
+| `POST` | `/v1/restaurantes/{restauranteId}/itens` | Cria um item no cardápio | `201` | `400`, `403`, `404` |
+| `GET` | `/v1/restaurantes/{restauranteId}/itens/{id}` | Busca um item do restaurante | `200` | `404` |
+| `GET` | `/v1/restaurantes/{restauranteId}/itens/listar` | Lista os itens do restaurante | `200` | `404` |
+| `PUT` | `/v1/restaurantes/{restauranteId}/itens/{id}` | Atualiza todos os dados do item | `200` | `400`, `403`, `404` |
+| `DELETE` | `/v1/restaurantes/{restauranteId}/itens/{id}` | Exclui um item | `204` | `403`, `404`, `409` |
 
-| Recurso | Rotas previstas | Campos |
-|---|---|---|
-| Item do cardápio | CRUD em `/v1/restaurantes/{id}/itens` | nome, descrição, preço, disponível apenas no local, caminho da foto |
+**Campos:** `nome` (até 120 caracteres), `descricao` (até 500), `preco` (maior que zero, até 2 casas decimais), `apenasNoLocal` (booleano) e `caminhoFoto` (opcional, até 255). Todos são obrigatórios, exceto `caminhoFoto`.
 
-**Regras já implementadas no use case**
+**Identificação do usuário:** as operações de escrita (`POST`, `PUT` e `DELETE`) exigem o cabeçalho `X-Usuario-Id` com o id do usuário que faz a requisição. Sem ele, ou com valor não numérico, a resposta é `400`. A API não tem autenticação nesta fase: o cabeçalho apenas identifica o usuário para a regra de dono.
 
-- Criar, atualizar e excluir exigem o **usuário que é dono do restaurante**: restaurante ou usuário inexistente resulta em `404`; usuário que não é o dono, em `403`.
-- Buscar e listar exigem apenas que o restaurante exista (`404`).
-- O item é sempre buscado **dentro do restaurante informado**: um item de outro restaurante é tratado como inexistente (`404`).
-- `nome` (até 120) e `descricao` (até 500) são obrigatórios; `preco` deve ser maior que zero, com no máximo 2 casas decimais; `caminhoFoto` é opcional (até 255).
+**Regras**
+
+- **Somente o dono altera o cardápio:** restaurante ou usuário inexistente resulta em `404`; usuário que não é o dono do restaurante (outro dono ou cliente), em `403`.
+- **Leitura aberta:** buscar e listar exigem apenas que o restaurante exista (`404`).
+- **Item sempre dentro do restaurante:** um item de outro restaurante é tratado como inexistente (`404`).
+- **Validações:** preço zero, negativo ou com mais de 2 casas decimais, e `apenasNoLocal` ausente, resultam em `400`.
+
+```bash
+curl -X POST http://localhost:8080/v1/restaurantes/1/itens \
+  -H "Content-Type: application/json" \
+  -H "X-Usuario-Id: 1" \
+  -d '{"nome": "Lasanha", "descricao": "Molho branco", "preco": 39.90,
+       "apenasNoLocal": true, "caminhoFoto": "/fotos/lasanha.jpg"}'
+```
 
 ### Respostas de erro
 
@@ -207,8 +221,8 @@ Os erros seguem o formato **RFC 7807** (`application/problem+json`):
 
 | Status | Quando acontece |
 |---|---|
-| `400 Bad Request` | corpo inválido ou mal formatado (campo obrigatório ausente, tamanho excedido, horário inválido) ou regra de domínio violada |
-| `403 Forbidden` | usuário que não é o dono do restaurante tenta alterar o cardápio _(a ser mapeado na camada web)_ |
+| `400 Bad Request` | corpo inválido ou mal formatado (campo obrigatório ausente, tamanho excedido, horário inválido), cabeçalho obrigatório ausente, parâmetro com valor inválido ou regra de domínio violada |
+| `403 Forbidden` | usuário que não é o dono do restaurante tenta alterar o cardápio |
 | `404 Not Found` | o recurso pedido não existe (inclusive o dono informado ao cadastrar um restaurante) |
 | `409 Conflict` | nome já cadastrado, e-mail já cadastrado, tentativa de excluir um registro em uso, ou alteração/exclusão de tipo sistêmico |
 | `422 Unprocessable Entity` | regra de negócio violada: dono que não é do tipo `DONO_RESTAURANTE`, ou troca de tipo de um dono que ainda possui restaurantes |
@@ -300,7 +314,7 @@ src/main/java/com/fiap/cleanarchitecture
 └── infrastructure
     ├── config                   UseCaseConfig                  (use cases como beans)
     ├── web
-    │   ├── controllers          TipoUsuario, Usuario e Restaurante
+    │   ├── controllers          TipoUsuario, Usuario, Restaurante e ItemCardapio
     │   ├── dtos                 DTOs de entrada e saída
     │   ├── mappers              *WebMapper                     (DTO <-> domínio)
     │   └── exceptions           GlobalExceptionHandler
@@ -369,18 +383,20 @@ As migrations ficam em `database/migrations` e são executadas pelo serviço `fl
 ## Testes e cobertura
 
 ```bash
-./mvnw verify        # roda todos os testes e valida a cobertura (Docker precisa estar rodando)
+./mvnw test          # somente os testes unitários e de arquitetura (não precisa do Docker)
+./mvnw verify        # unitários + integração + validação da cobertura (Docker precisa estar rodando)
 ```
 
 | Tipo | O que cobre | Ferramentas |
 |---|---|---|
-| **Unitários** | regras do domínio, use cases, gateways, mappers e controllers, com dependências simuladas | JUnit 5, Mockito |
-| **Integração** | API completa (HTTP → use case → banco), com **PostgreSQL real** em container e as migrations reais aplicadas | `@SpringBootTest`, MockMvc, Testcontainers, Flyway |
-| **Arquitetura** | a regra de dependência entre as camadas | ArchUnit |
+| **Unitários** (`*Test`) | regras do domínio, use cases, gateways, mappers e controllers, com dependências simuladas | JUnit 5, Mockito |
+| **Integração** (`*IT`) | API completa (HTTP → use case → banco), com **PostgreSQL real** em container e as migrations reais aplicadas | `@SpringBootTest`, MockMvc, Testcontainers, Flyway |
+| **Arquitetura** (`*Test`) | a regra de dependência entre as camadas | ArchUnit |
 
+- Os testes de integração terminam em `IT` (`UsuarioIT`, `RestauranteIT`, `ItemCardapioIT`, `TipoUsuarioIT`) e são executados pelo Maven Failsafe na fase `verify`; os unitários terminam em `Test` e rodam no Surefire.
 - Os testes de integração compartilham **um único container** PostgreSQL e usam dados únicos por teste, sem apagar tabelas, então um teste não depende de outro nem da ordem de execução.
 - As migrations dos testes vêm de `database/migrations`; por isso o Maven deve ser executado na **raiz do projeto**.
-- O **JaCoCo** exige no mínimo **80% de cobertura de linhas**: abaixo disso o `mvn verify` falha.
+- O **JaCoCo** soma a cobertura dos testes unitários e de integração e exige no mínimo **80% de cobertura de linhas**: abaixo disso o `mvn verify` falha.
 - Relatório de cobertura: `target/site/jacoco/index.html`.
 - Em JDKs mais novos que o 21, o JaCoCo pode imprimir avisos de instrumentação durante os testes; eles não afetam o resultado.
 
@@ -407,4 +423,4 @@ As migrations ficam em `database/migrations` e são executadas pelo serviço `fl
 
 🚧 _A collection será adicionada em `postman/` com o fluxo completo: criar tipo → criar usuário → associar tipo → criar restaurante → cadastrar item do cardápio._
 
-Enquanto isso, todos os endpoints disponíveis podem ser testados pelo Swagger UI: http://localhost:8080/swagger-ui.html
+Enquanto isso, todos os endpoints podem ser testados pelo Swagger UI: http://localhost:8080/swagger-ui.html
