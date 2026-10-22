@@ -5,6 +5,7 @@ import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
 @AnalyzeClasses(packages = "com.fiap.cleanarchitecture",
@@ -37,4 +38,17 @@ class ArquiteturaTest {
     static final ArchRule webNaoDependeDaPersistencia = noClasses()
             .that().resideInAPackage("..infrastructure.web..")
             .should().dependOnClassesThat().resideInAPackage("..infrastructure.persistence..");
+
+    @ArchTest
+    static final ArchRule useCasesSoSaoAcessadosPorConfigEWeb = classes()
+            .that().resideInAPackage("..application.usecases..")
+            .should().onlyBeAccessed().byAnyPackage(
+                    "..application.usecases..",
+                    "..infrastructure.config..",
+                    "..infrastructure.web..");
+
+    @ArchTest
+    static final ArchRule webNaoDependeDeGateways = noClasses()
+            .that().resideInAPackage("..infrastructure.web..")
+            .should().dependOnClassesThat().resideInAPackage("..application.gateways..");
 }
