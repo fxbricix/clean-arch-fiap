@@ -6,7 +6,7 @@ Esta fase entrega o gerenciamento de **tipos de usuário** e **usuários**, o ca
 
 - **Autor:** Fabricio Moreira
 - **Repositório:** https://github.com/fxbricix/clean-arch-fiap
-- **Vídeo de apresentação:** [Video](https://www.youtube.com/watch?v=Q78fmaXN1tM)
+- **Vídeo de apresentação:** [Apresentaçao Tech Challenge](https://www.youtube.com/watch?v=5vE52TNALCk)
 
 ---
 
