@@ -44,9 +44,7 @@ class ArquiteturaTest {
             .that().resideInAPackage("..application.usecases..")
             .should().onlyBeAccessed().byAnyPackage(
                     "..application.usecases..",
-                    "..infrastructure.config..",
-                    "..infrastructure.web..");
-
+                    "..infrastructure.config..");
     @ArchTest
     static final ArchRule webNaoDependeDeGateways = noClasses()
             .that().resideInAPackage("..infrastructure.web..")
